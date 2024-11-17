@@ -4,11 +4,27 @@ To add images, replace `tutheaderbl1.png` with the file name of any image you up
 
 ### Tutorial Aims
 
-#### <a href="#section1"> 1. Writing Linear Model Equations</a>
+#### <a href="#section1"> 1. Writing Linear Model Equations Mathematically</a>
 
-#### <a href="#section2"> 2. The second section</a>
+#### <a href="#section2"> 2. Evaluation Metrics</a>
+subsection: AIC
+subsection: p value and hypothsis test
 
-#### <a href="#section3"> 3. The third section</a>
+#### <a href="#section3"> 3. Model Selection Methods</a>
+subsection, Method 1: step
+- how it works
+- what its doing
+- how to interpret output
+subsection, Method 2: drop 1
+- how it works
+- what its doing
+- how to interpret output
+subsection, Method 3: ANOVA
+- how it works
+- what its doing
+ -how to interpret output
+#### <a href="#section4"> 3. Model Selection </a>
+
 
 You can read this text, then delete it and replace it with your text about your tutorial: what are the aims, what code do you need to achieve them?
 ---------------------------
@@ -100,5 +116,4 @@ Everything below this is footer material - text and links that appears at the en
 #### Check out our <a href="https://ourcodingclub.github.io/links/" target="_blank">Useful links</a> page where you can find loads of guides and cheatsheets.
 
 #### If you have any questions about completing this tutorial, please contact us on ourcodingclub@gmail.com
-
 
