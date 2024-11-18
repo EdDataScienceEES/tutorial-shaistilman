@@ -272,7 +272,7 @@ Lets look at the summary of our linear model to find our unknown paramaters: $\a
 #finding alpha and our beta's
 summary(uswages_lm)
 ```
-![Summary Output]()
+![Summary Output](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/multiple_cnts_summary.png)
 
 Which gives the following output
 ## Linear Models with Categorical Variables
