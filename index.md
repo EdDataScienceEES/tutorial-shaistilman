@@ -115,11 +115,24 @@ In this first section we are going to loook at the `aatemp` dataset which contai
 
 ```r
 # Import Data
-aatemp <- data('aatemp')
+aatemp <- data('aatemp.rda')
 str(aatemp)
 summary(aatemp)
 ```
- 
+From the output of `str(aatempt)` we see that this dataset has 115 observations with 2 obsvretaions; `year` and `temp`.  It is likely that both of these are continous but we can check that is tghe case woth the follwloing code:
+
+```r
+
+```
+
+We see that year is an integer and temp is nuermical hence we have 2 contonous variibales. Lets say we were intersted in seeing how the temeprarure in Ann Arbor has chnaged over time we could construct a simple linear model where temp is the respone variable and year is the explanatory variable. In R this would look like:
+
+
+```r
+
+```
+
+But how would we write this mathematically?
 
 
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
