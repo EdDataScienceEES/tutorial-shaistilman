@@ -78,8 +78,8 @@ You can find all the data that you require for completing this tutorial on this 
 
 Now we are ready to dive into the world of model selection!
 
-# 2. Part I: Data Transformations
-{: #Transformations}
+# 2. Writing Models Mathematically
+{: #maths}
 
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
 Credits: Matus Seci
