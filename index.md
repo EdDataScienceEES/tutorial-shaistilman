@@ -85,33 +85,68 @@ Now we are ready to dive into the world of model selection!
 
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
 
+Here’s the updated Markdown text with the additional details about $\epsilon_i$ and its normal distribution:
 
-Writing linear models mathematically is useful skill and helps us visualise and understadn what our code is doing and what linear models are all about! Before we start all that fun it is important we have a quick overview of different variables in linear models. We will be focusing on continous and factor varaibles. Continous varibales are anything that is (you guessesed it!) contonous which is anything numerical, e.g, years, population counts etc. Factor vaiables are categorgical varaibles, e.g country names, breed names, species names etc. Factor variables have things called `levels`. Levels are the different type of options the categirucal variabls can have. For example, say we are intesed in population of birds in the different countries of UK, our ctagorical variable `xountry_name` would have 4 levels; Scotland, England, Wales and Nothern Ireland. Now we have that covered lets start the fun!!
+Writing linear models mathematically is a useful skill that helps us visualize and understand what our code is doing and what linear models are all about! Before diving into the details, let’s first review the types of variables used in linear models. We focus on **continuous** and **factor (categorical)** variables.
 
-We will start off with linear models with continous varables moving to models with factors (categorical variables). Since explaining statistical concepts is always easier with examples, let's jump straight into it!
+- **Continuous variables** are numerical values that can take any value within a range, e.g., years, population counts, or temperatures.
+- **Factor variables** are categorical variables, e.g., country names, species names, or breed types. Factor variables have **levels**, which are the possible categories a variable can take.
 
-## Linear Models with Continous Variables
-{: #simple}
+For example, if we are analyzing the population of birds in the UK, the categorical variable `country_name` would have 4 levels: Scotland, England, Wales, and Northern Ireland.
 
-To start off, open a new R script in RStudio and write down a header with the title of the script (e.g. the tutorial name), your name and contact details and the last date you worked on the script.
+Now that we understand the basics, let’s start with how we can write linear models with **continuous variable** mathematically and then move to models that include factor variables.
 
-In the following parts we will work with data from the `faraway` package, which is a package in R containing different datasets.
+## Linear Models with Continuous Variables
 
-In each part of the tutorial we will focus on a population of a different species. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use `install.packages('package_name')` to install them before loading them.
+Suppose we have $n$ observations, where each observation corresponds to a response variable, $y_i$, treated as a realization of a random variable, $Y_i$. The response variable has an expected value, $\mu_i = \mathbb{E}[Y_i]$, which depends on the associated predictor (explanatory variable), $x_i$.
 
+The simplest case of linear regression assumes:
 
-```r
-# Coding Club Tutorial - Model Selection
-# Shai Stilman, s2183612@ed.ac.uk
-# 18/11/24
+$\mathbb{E}[Y] = \alpha + \beta x$,
 
-library(tidyverse)  # contains ggplot2 (data visualization) and other useful packages
-library(cowplot)  # making effective plot grids
-library(MASS)  # contains boxcox() function
-library(mvtnorm)  #
-library(fawraway) #contains the datasets needed for this tutorial
-```
-In this first section we are going to loook at the `aatemp` dataset which contains information of the anual mean temperatures in Ann Arbor, Michigan. We begin by loading the dataset and having a look at the basic structure of the dataframe to get some idea of the different variables it contains.
+where $\alpha$ is the **intercept**, and $\beta$ is the **slope**. In this context:
+- $\alpha$ represents the mean value of $Y$ when $x = 0$.
+- $\beta$ indicates the change in $Y$ for a one-unit change in $x$.
+
+For $i = 1, \dots, n$, the general form is:
+
+$Y_i = \alpha + \beta x_i + \epsilon_i$,
+
+where $\epsilon_i$ are independent error terms with:
+
+$\mathbb{E}[\epsilon_i] = 0 \quad \text{and} \quad \text{Var}(\epsilon_i) = \sigma^2.$
+
+Additionally, we assume that the errors $\epsilon_i$ follow a normal distribution:
+
+$\epsilon_i \sim^{\text{i.i.d.}} \mathcal{N}(0, \sigma^2)$,
+
+meaning they are **independent and identically distributed** normal random variables with mean $0$ and variance $\sigma^2$. As a result, the response variable $Y_i$ also follows a normal distribution:
+
+$Y_i \sim^{\text{i.i.d.}} \mathcal{N}(\alpha + \beta x_i, \sigma^2)$.
+
+These assumptions form the foundation of the simple linear regression model.Suppose we have $n$ observations, where each observation corresponds to a response variable, $y_i$, treated as a realization of a random variable, $Y_i$. The response variable has an expected value, $\mu_i = \mathbb{E}[Y_i]$, which depends on the associated predictor (explanatory variable), $x_i$.
+
+The simplest case of linear regression assumes:
+
+$\mathbb{E}[Y] = \alpha + \beta x$,
+
+where $\alpha$ is the **intercept**, and $\beta$ is the **slope**. In this context:
+- $\alpha$ represents the mean value of $Y$ when $x = 0$.
+- $\beta$ indicates the change in $Y$ for a one-unit change in $x$.
+
+For $i = 1, \dots, n$, the general form is:
+
+$Y_i = \alpha + \beta x_i + \epsilon_i$,
+
+where $\epsilon_i$ are independent error terms.
+
+For this tutorial we do not need to worry $\epsilon_i$ terms but for those who are intersted, in linear regression we assume that $\mathbb{E}[\epsilon_i] = 0 \quad \text{and} \quad \text{Var}(\epsilon_i) = \sigma^2$ and that the errors $\epsilon_i$ follow a normal distribution: $\epsilon_i \sim^{\text{i.i.d.}} \mathcal{N}(0, \sigma^2)$, meaning they are **independent and identically distributed** normal random variables with mean $0$ and variance $\sigma^2$. As a result, the response variable $Y_i$ also follows a normal distribution:
+
+$Y_i \sim^{\text{i.i.d.}} \mathcal{N}(\alpha + \beta x_i, \sigma^2)$.
+
+These assumptions form the foundation of the simple linear regression model and our model assumtptions!.
+
+Now that we have seen how we can write these models mathematically lets look at an example! To begin, let’s load the data and inspect it. In this tutorial, we use the `aatemp` dataset, which contains annual mean temperatures for Ann Arbor, Michigan.
 
 ```r
 # Import Data
@@ -119,83 +154,63 @@ aatemp <- data('aatemp.rda')
 str(aatemp)
 summary(aatemp)
 ```
-From the output of `str(aatempt)` we see that this dataset has 115 observations with 2 obsvretaions; `year` and `temp`.  It is likely that both of these are continous but we can check that is tghe case woth the follwloing code:
+
+From the output of `str(aatemp)`, we see that the dataset has 115 observations with two variables: `year` and `temp`. Both are likely continuous variables, which we can confirm using:
 
 ```r
-
+# Check the types of variables
+str(temp_data$year)
+str(temp_data$temp)
 ```
 
-We see that year is an integer and temp is nuermical hence we have 2 contonous variibales. Lets say we were intersted in seeing how the temeprarure in Ann Arbor has chnaged over time we could construct a simple linear model where temp is the respone variable and year is the explanatory variable. In R this would look like:
-
+The results confirm that `year` is an integer, and `temp` is numeric. Additionally, the first year in the dataset is 1854. To make our linear model more interpretable, we adjust this to treat 1854 as year 0.
 
 ```r
-
+# Adjust year to treat 1854 as year 0
+temp_data$year <- temp_data$year - min(temp_data$year)
 ```
 
-But how would we write this mathematically? Hold onto your hats we are going to get a bit technical, althought this may look scary I promise you it is actually quite starightforward!
 
-
-In a general linear regression model, we analyze \(n\) observations, where each observation corresponds to a response variable, denoted as $y_i$. This response variable is the value we are trying to predict or explain, and it is treated as a realization of a **random variable**, $Y_i$, for $i = 1, 2, \dots, n$.
-
-A **random variable** is a quantity that can take different values due to chance or uncertainty. For example, the height of a randomly chosen person or the daily temperature in a city are random variables because their exact values vary depending on the situation.
-
-In our case, the random variable $Y_i$ represents the possible outcomes for the response variable $y_i$. The response variable $y_i$ has an **expected value**, $\mu_i = \mathbb{E}[Y_i]$, which is the average or "predicted" value of $Y_i$ based on the model.
-
-Each response variable is linked to an associated **predictor** or **explanatory variable**, denoted as $x_i$. The predictor $x_i$ is an observed quantity (e.g., a measurement or characteristic) that helps explain or predict the response variable. For example, $x_i$ could be the age of a person if we are predicting their income.
-
-The simplest form of regression is linear regression, in which the mean of the response variable $Y$ is linearly related to the single explanatory variable $x$, so that:  
-$\mathbb{E}[Y] = \alpha + \beta x,$ 
-where $\alpha$ and $\beta$ are unknown parameters to be estimated.
-
-In other words, the expected value of the response variable, $Y$, is a linear function of the explanatory variable, $x$. The intercept and slope parameters $\alpha$ and $\beta$ are referred to as the **regression parameters**.
-
-We typically write $Y_i$ for the random variable $Y$ associated with the observed explanatory variable value $x_i$, for $i = 1, \dots, n$, and write:  
-$$\mathbb{E}[Y_i] = \alpha + \beta x_i, \quad \text{for } i = 1, \dots, n.$$
-
-This can be rewritten as:  
-$$Y_i = \alpha + \beta x_i + \epsilon_i, \quad i = 1, \dots, n,$$  
-where $\epsilon_1, \dots, \epsilon_n$ are independent random variables (or errors) with:  
-$$\mathbb{E}[\epsilon_i] = 0 \quad \text{and} \quad \text{Var}(\epsilon_i) = \sigma^2.$$
-
-This is typically referred to as **simple linear regression**.
-
-For this tutorial we can ignore $\epsilon_i$ but for those that are intertsed $\epsilon_i$ refer to the error terms of our models, we assume that these are all 0 and have equal varaince, that is:
-
-\[
-\mathbb{E}[\varepsilon_i] = 0 \quad \text{and} \quad \text{Var}(\varepsilon_i) = \sigma^2, \quad \text{for } i = 1, \ldots, n,
-\]
-
-and \(\varepsilon_i\) and \(\varepsilon_j\) are independent for any pair of indexes \(i, j = 1, \ldots, n\), with \(i \neq j\). These tie into our model assumptions as  we assume that: 
-
-$\epsilon_i \sim^{i.i.d} \mathcal{N}(0, \sigma^2)$
-
-i.e, the errors are **identically indepentldy distrubuted** normal variables with mean 0 and varaince $\sigma^2$. Thus, lots of maths shows that beacyse tehse are normal our repsone variable is also normally distruvted:
-
-$Yi \sim^{i.i.d} \mathcal{N}(\mathbb{E}[Y], \sigma^2)$.
-
-This is not imprtant for this tutorial but it is a cool and fun!
-
-anyways back to the best part, how would we write our model mathematically:
+Let’s model how the temperature in Ann Arbor has changed over time. In R, we create a simple linear model where `temp` is the response variable, and `year` is the explanatory variable:
 
 ```r
-
+# Build the linear model
+aatemp_lm <- lm(temp ~ year, data = temp_data)
 ```
-Well we know that our respone variable $y_i$ is the tempature and our respone variavle $x_i$ is year. So our linear model would be a simple linear model and would look like:
 
-$Y_i = \alpha + \beta x_i + \epsilon_i, \quad i = 1, \dots, n,$ and we would have that $\mathbb{E}[Y] = \alpha + \beta x,$ where $\alpha$ and $\beta$ are unknown parameters to be estimated.
+So now we have our model can we write this mathematically?
 
-But how do we find $\alpha$ and $\beta$. Well we see that when our explanatory variavle $x_i = 0$ all we are left woth is  $\alpha$  therefore $\alpha$  is our intercept! We would then call $\beta$ our slope but all that means is that  $\beta$ is the coefficant infront of our year so tells us how much our temperture changes year by year! To find these values we look at the smmary of our linear model.
-
+Let’s calculate the intercept ($\alpha$) and slope ($\beta$) using the summary of our linear model:
 
 ```r
-
-
+# Summarize the model
+summary(aatemp_lm)
 ```
 
-Which should give us the following output:
+From the output:
+- $\alpha = 46.693396$, which means that at year 0 (1854), the mean temperature was $46.693396^\circ\mathrm{F}$.
+- $\beta = 0.012237$, indicating that the temperature increases by approximately $0.012237^\circ\mathrm{F}$ each year.
 
-![Summary Output]()
+But what if we wanted to create a linear model that had multiple explanatory variables, how can we write this mathematically?
 
+If we include multiple continuous explanatory variables, the model extends to:
+
+$Y_i = \alpha + \beta_1 x_{i1} + \beta_2 x_{i2} + \dots + \beta_p x_{ip} + \epsilon_i$
+
+where:
+- $x_{i1}, x_{i2}, \dots, x_{ip}$ are the explanatory variables for observation $i$,
+- $\beta_1, \beta_2, \dots, \beta_p$ are the corresponding slopes for each predictor,
+- $\alpha$ is the intercept,
+- $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$ represents the error term.
+
+This framework allows us to account for multiple factors influencing the response variable $Y$.
+
+Lets look at an example!
+
+
+
+
+## Linear Models with Categorical Variables
 
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
 Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
