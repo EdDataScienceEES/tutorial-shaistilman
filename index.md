@@ -84,7 +84,7 @@ Now we are ready to dive into the world of model selection!
 {: #maths}
 
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
-Credits: Matus Seci
+
 
 Writing linear models mathematically is useful skill and helps us visualise and understadn what our code is doing and what linear models are all about! Before we start all that fun it is important we have a quick overview of different variables in linear models. We will be focusing on continous and factor varaibles. Continous varibales are anything that is (you guessesed it!) contonous which is anything numerical, e.g, years, population counts etc. Factor vaiables are categorgical varaibles, e.g country names, breed names, species names etc. Factor variables have things called `levels`. Levels are the different type of options the categirucal variabls can have. For example, say we are intesed in population of birds in the different countries of UK, our ctagorical variable `xountry_name` would have 4 levels; Scotland, England, Wales and Nothern Ireland. Now we have that covered lets start the fun!!
 
@@ -193,6 +193,8 @@ But how do we find $\alpha$ and $\beta$. Well we see that when our explanatory v
 ```
 
 Which should give us the following output:
+
+![Summary Output]()
 
 
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
