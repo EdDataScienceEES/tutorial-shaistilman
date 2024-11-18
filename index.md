@@ -76,7 +76,7 @@ This tutorial builds on these foundational skills, guiding you step-by-step thro
 ## Data and Materials
 {: #DataMat}
 
-You can find all the data that you require for completing this tutorial on this [GitHub repository](). We encourage you to download the data to your computer and work through the examples along the tutorial as this reinforces your understanding of the concepts taught in the tutorial.
+You can find all the data that you require for completing this tutorial on this [GitHub repository](). We encourage you to download the data to your computer and work through the examples along the tutorial as this reinforces your understanding of the concepts taught in the tutorial. In this tutorial we will work with data from the faraway package, which is a package in R containing different datasets. 
 
 Now we are ready to dive into the world of model selection!
 
@@ -84,8 +84,6 @@ Now we are ready to dive into the world of model selection!
 {: #maths}
 
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
-
-Here’s the updated Markdown text with the additional details about $\epsilon_i$ and its normal distribution:
 
 Writing linear models mathematically is a useful skill that helps us visualize and understand what our code is doing and what linear models are all about! Before diving into the details, let’s first review the types of variables used in linear models. We focus on **continuous** and **factor (categorical)** variables.
 
@@ -146,7 +144,26 @@ $Y_i \sim^{\text{i.i.d.}} \mathcal{N}(\alpha + \beta x_i, \sigma^2)$.
 
 These assumptions form the foundation of the simple linear regression model and our model assumtptions!.
 
-Now that we have seen how we can write these models mathematically lets look at an example! To begin, let’s load the data and inspect it. In this tutorial, we use the `aatemp` dataset, which contains annual mean temperatures for Ann Arbor, Michigan.
+Now that we have seen how we can write these models mathematically lets look at an example! 
+
+To start off, open a new R script in RStudio and write down a header with the title of the script (e.g. the tutorial name), your name and contact details and the last date you worked on the script.
+
+In this tutorial we will work with data from the faraway package, which is a package in R containing different datasets. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use install.packages('package_name') to install them before loading them.
+
+To begin, let’s load the data and inspect it. In this tutorial, we use the `aatemp` dataset, which contains annual mean temperatures for Ann Arbor, Michigan.
+
+```r
+# Coding Club Tutorial - Model Selection
+# Shai Stilman, s2183612@ed.ac.uk
+# 18/11/24
+
+library(tidyverse)  # contains ggplot2 (data visualization) and other useful packages
+library(cowplot)  # making effective plot grids
+library(MASS)  # contains boxcox() function
+library(mvtnorm)  #
+library(fawraway) #contains the datasets needed for
+```
+In this first section we are going to loook at the aatemp dataset which contains information of the anual mean temperatures in Ann Arbor, Michigan. We begin by loading the dataset and having a look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
 ```r
 # Import Data
@@ -155,7 +172,7 @@ str(aatemp)
 summary(aatemp)
 ```
 
-From the output of `str(aatemp)`, we see that the dataset has 115 observations with two variables: `year` and `temp`. Both are likely continuous variables, which we can confirm using:
+From the output of `str(aatemp)`, we see that the dataset has 115 observations with two variables: `year` and `temp`. From their names it is likley they are continous variables, which we can confirm using:
 
 ```r
 # Check the types of variables
@@ -170,7 +187,6 @@ The results confirm that `year` is an integer, and `temp` is numeric. Additional
 temp_data$year <- temp_data$year - min(temp_data$year)
 ```
 
-
 Let’s model how the temperature in Ann Arbor has changed over time. In R, we create a simple linear model where `temp` is the response variable, and `year` is the explanatory variable:
 
 ```r
@@ -180,18 +196,30 @@ aatemp_lm <- lm(temp ~ year, data = temp_data)
 
 So now we have our model can we write this mathematically?
 
-Let’s calculate the intercept ($\alpha$) and slope ($\beta$) using the summary of our linear model:
+Well we know that our respone variable $y_i$ is the tempature and our respone variavle $x_i$ is year. So our linear model would be a simple linear model and would look like:
+
+$Y_i = \alpha + \beta x_i + \epsilon_i, \quad i = 1, \dots, n,$ and we would have that $\mathbb{E}[Y] = \alpha + \beta x,$ where $\alpha$ and $\beta$ are unknown parameters to be estimated.
+
+But how do we find $\alpha$ (intercept) and $\beta$ (slope). Well we can look at the summary of our linear model:
 
 ```r
 # Summarize the model
 summary(aatemp_lm)
 ```
+Which gives the following output:
+
 
 From the output:
 - $\alpha = 46.693396$, which means that at year 0 (1854), the mean temperature was $46.693396^\circ\mathrm{F}$.
 - $\beta = 0.012237$, indicating that the temperature increases by approximately $0.012237^\circ\mathrm{F}$ each year.
 
-But what if we wanted to create a linear model that had multiple explanatory variables, how can we write this mathematically?
+So our linear model written mathematically is:
+
+$Y_i = 46.693396 + 0.012237 x_i + \epsilon_i, \quad i = 1, \dots, n,$
+
+Woohoo! We have just written our first linear model mathematically! 
+
+Now, it is very rare we only have one explanatory variable in our linear model, what if we wanted to create a linear model that had multiple explanatory variables, how can we write this mathematically?
 
 If we include multiple continuous explanatory variables, the model extends to:
 
@@ -207,9 +235,44 @@ This framework allows us to account for multiple factors influencing the respons
 
 Lets look at an example!
 
+The `uswages` dataset contains information on 2,000 U.S. male workers sampled from the 1988 Current Population Survey, with real weekly wages adjusted to 1992 dollars. Key variables include `wage` (real weekly wages), `educ` (years of education), and `exper` (years of work experience) and lots more!
 
+Lets begin by loaidng the data into our script and understanding the structure of it.
 
+```r
+load("data/uswages.rda")  # Load the data
+uswages_data <- uswages   #assign name
+str(uswages_data)
+summary(uswages_data)
+```
 
+Lets say we are intersted in a linear model that predicts wage given years or experience and years of education. Before we start modelling we need to see what type of variables ears or experience and years of education are:
+
+```r
+#Understand what type of variable we are working with
+str(uswages_data$educ)
+str(uswages_data$exper)
+```
+Now that we know these are continous variables lets get modelling!!
+
+```r
+#making model
+uswages_lm <- lm(wage ~ educ + exper, uswages_data)
+```
+So now we have our model can we write this mathematically?
+
+Well we know that our respone variable $y_i$ is the wage and our respone variables are; $x_{i,1}$ as years of education and $x_{i,2}$ as years of experience. So our linear model would look like:
+
+$Y_i = \alpha + \beta_1 x_{i,1} + \beta_2 x_{i,2} + \epsilon_i, \quad i = 1, \dots, n,$ and we would have that $\mathbb{E}[Y] = \alpha + \beta_1 x_{i,1} + \beta_2 x_{i,2}$, where $\beta_1$ corresponds to the coefficienct of years of education and $\beta_2$ the coefficient of years of experience. 
+
+Lets look at the summary of our linear model to find our unknown paramaters: $\alpha$, $\beta_1$ and $\beta_2$
+
+```r
+#finding alpha and our beta's
+summary(uswages_lm)
+```
+
+Which gives the following output
 ## Linear Models with Categorical Variables
 
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
