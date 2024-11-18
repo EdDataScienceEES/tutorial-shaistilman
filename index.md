@@ -135,6 +135,30 @@ We see that year is an integer and temp is nuermical hence we have 2 contonous v
 But how would we write this mathematically?
 
 
+In a general linear regression model, we analyze \(n\) observations, where each observation corresponds to a **response variable**, denoted as \(y_i\). This response variable is the value we are trying to predict or explain, and it is treated as a realization of a **random variable**, \(Y_i\), for \(i = 1, 2, \dots, n\).
+
+A **random variable** is a quantity that can take different values due to chance or uncertainty. For example, the height of a randomly chosen person or the daily temperature in a city are random variables because their exact values vary depending on the situation.
+
+In our case, the random variable \(Y_i\) represents the possible outcomes for the response variable \(y_i\). The response variable \(y_i\) has an **expected value**, \(\mu_i = \mathbb{E}[Y_i]\), which is the average or "predicted" value of \(Y_i\) based on the model.
+
+Each response variable is linked to an associated **predictor** or **explanatory variable**, denoted as \(x_i\). The predictor \(x_i\) is an observed quantity (e.g., a measurement or characteristic) that helps explain or predict the response variable. For example, \(x_i\) could be the age of a person if we are predicting their income.
+
+**Definition 4.1.** A simple linear model with only one predictor is:
+
+\[
+Y_i = \mu_i + \varepsilon_i, \quad \text{with } \mu_i = \beta x_i, \quad i = 1, \ldots, n. \tag{85}
+\]
+
+Here, \(\beta\) is an unknown parameter, and the \(\varepsilon_i\) are mutually independent zero-mean random variables, each with the same known variance \(\sigma^2\). That is:
+
+\[
+\mathbb{E}[\varepsilon_i] = 0 \quad \text{and} \quad \text{Var}(\varepsilon_i) = \sigma^2, \quad \text{for } i = 1, \ldots, n,
+\]
+
+and \(\varepsilon_i\) and \(\varepsilon_j\) are independent for any pair of indexes \(i, j = 1, \ldots, n\), with \(i \neq j\). For the moment, we do not assume anything else about the distribution of the random variables \(\varepsilon = (\varepsilon_1, \ldots, \varepsilon_n)\).
+
+
+
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
 Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
