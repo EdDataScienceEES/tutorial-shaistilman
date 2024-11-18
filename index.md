@@ -24,8 +24,8 @@ tags: modelling
   - [Prerequisites](#Prerequisites)
   - [Data and Materials](#DataMat)
 2. [**Writing Models Mathematically**](#maths)
-  - [Simple Linear Models](#simple)
-  - [Linear Models with Categorical Variables](#cat)
+  - [Linear Models with Continous Variables](#simple)
+  - [Linear Models with Factor (Categorical) Variables](#cat)
 3. [**Evaluation Metrics**](#eval)
   - [P-value and Hypotheis Test](#pval)
   - [AIC](#AIC)
@@ -66,7 +66,9 @@ While we will be using the programming language **R** throughout this tutorial, 
 
 If you’re new to linar models in R or need a refresher, the Coding Club website offers excellent resources to get you up to speed:  
 - [From Distruvutions to Linear Modles](https://ourcodingclub.github.io/tutorials/modelling/)  
-- [Introduction to Model Design](https://ourcodingclub.github.io/tutorials/model-design/)  
+- [Introduction to Model Design](https://ourcodingclub.github.io/tutorials/model-design/)
+
+
 
 
 This tutorial builds on these foundational skills, guiding you step-by-step through the process of model selection for linear models with categorical variables.
@@ -84,13 +86,18 @@ Now we are ready to dive into the world of model selection!
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
 Credits: Matus Seci
 
-Writing linear models mathematically is useful skill and helps us visualise and understadn what our code is doing and what linear models are all about! We will start off with simple linear models moving to models with factors (categorical variables). Since explaining statistical concepts is always easier with examples, let's jump straight into it!
+Writing linear models mathematically is useful skill and helps us visualise and understadn what our code is doing and what linear models are all about! Before we start all that fun it is important we have a quick overview of different variables in linear models. We will be focusing on continous and factor varaibles. Continous varibales are anything that is (you guessesed it!) contonous which is anything numerical, e.g, years, population counts etc. Factor vaiables are categorgical varaibles, e.g country names, breed names, species names etc. Factor variables have things called `levels`. Levels are the different type of options the categirucal variabls can have. For example, say we are intesed in population of birds in the different countries of UK, our ctagorical variable `xountry_name` would have 4 levels; Scotland, England, Wales and Nothern Ireland. Now we have that covered lets start the fun!!
+
+We will start off with linear models with continous varables moving to models with factors (categorical variables). Since explaining statistical concepts is always easier with examples, let's jump straight into it!
+
+## Linear Models with Continous Variables
+{: #simple}
 
 To start off, open a new R script in RStudio and write down a header with the title of the script (e.g. the tutorial name), your name and contact details and the last date you worked on the script.
 
+In the following parts we will work with data from the `faraway` package, which is a package in R containing different datasets.
 
-
-In the following parts we will work with the data from the [Living Planet Index](https://livingplanetindex.org/home/index) which is an open-source database containing population data of a large number of species from all around the planet. In each part of the tutorial we will focus on a population of a different species. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use `install.packages('package_name')` to install them before loading them.
+In each part of the tutorial we will focus on a population of a different species. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use `install.packages('package_name')` to install them before loading them.
 
 
 ```r
@@ -101,23 +108,33 @@ In the following parts we will work with the data from the [Living Planet Index]
 library(tidyverse)  # contains ggplot2 (data visualization) and other useful packages
 library(cowplot)  # making effective plot grids
 library(MASS)  # contains boxcox() function
-library(mvtnorm)  # 
+library(mvtnorm)  #
+library(fawraway) #contains the datasets needed for this tutorial
+```
+In this first section we are going to loook at the `aatemp` dataset which contains information of the anual mean temperatures in Ann Arbor, Michigan. We begin by loading the dataset and having a look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
+```r
 # Import Data
-butterfat <- data('butterfat')
+aatemp <- data('aatemp')
+str(aatemp)
+summary(aatemp)
 ```
  
 
 
-
-
+In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
 Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
 ```r
-str(LPI_species)
-summary(LPI_species)
+# Import Data
+butterfat <- data('butterfat')
+str(butterfat)
+summary(butterfat)
 ```
-We can see that the dataset contains information about 31 species. In this part we will look at the population data of the white stork (<i>Ciconia ciconia <i>) sampled using the **direct counts** method. In particular we will attempt to answer the following research question:
+
+We have Breed as a factor with 5 levels, Ayreshire, Canadian, Guernesy, jersy and Holstein-Fresian. Age is a facor with 2 levls `2 year` and `Mature`.
+
+We can see that the dataset contains information about 100 observation. In this part we will look at how we can model a linear model inebstigtong how butterfat content changes across doffernet breeds nad differnet ages.
 
 **How did the population of the white stork change over time?**
 
