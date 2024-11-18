@@ -132,31 +132,67 @@ We see that year is an integer and temp is nuermical hence we have 2 contonous v
 
 ```
 
-But how would we write this mathematically?
+But how would we write this mathematically? Hold onto your hats we are going to get a bit technical, althought this may look scary I promise you it is actually quite starightforward!
 
 
-In a general linear regression model, we analyze \(n\) observations, where each observation corresponds to a **response variable**, denoted as \(y_i\). This response variable is the value we are trying to predict or explain, and it is treated as a realization of a **random variable**, \(Y_i\), for \(i = 1, 2, \dots, n\).
+In a general linear regression model, we analyze \(n\) observations, where each observation corresponds to a response variable, denoted as $y_i$. This response variable is the value we are trying to predict or explain, and it is treated as a realization of a **random variable**, $Y_i$, for $i = 1, 2, \dots, n$.
 
 A **random variable** is a quantity that can take different values due to chance or uncertainty. For example, the height of a randomly chosen person or the daily temperature in a city are random variables because their exact values vary depending on the situation.
 
-In our case, the random variable \(Y_i\) represents the possible outcomes for the response variable \(y_i\). The response variable \(y_i\) has an **expected value**, \(\mu_i = \mathbb{E}[Y_i]\), which is the average or "predicted" value of \(Y_i\) based on the model.
+In our case, the random variable $Y_i$ represents the possible outcomes for the response variable $y_i$. The response variable $y_i$ has an **expected value**, $\mu_i = \mathbb{E}[Y_i]$, which is the average or "predicted" value of $Y_i$ based on the model.
 
-Each response variable is linked to an associated **predictor** or **explanatory variable**, denoted as \(x_i\). The predictor \(x_i\) is an observed quantity (e.g., a measurement or characteristic) that helps explain or predict the response variable. For example, \(x_i\) could be the age of a person if we are predicting their income.
+Each response variable is linked to an associated **predictor** or **explanatory variable**, denoted as $x_i$. The predictor $x_i$ is an observed quantity (e.g., a measurement or characteristic) that helps explain or predict the response variable. For example, $x_i$ could be the age of a person if we are predicting their income.
 
-**Definition 4.1.** A simple linear model with only one predictor is:
+The simplest form of regression is linear regression, in which the mean of the response variable $Y$ is linearly related to the single explanatory variable $x$, so that:  
+$\mathbb{E}[Y] = \alpha + \beta x,$ 
+where $\alpha$ and $\beta$ are unknown parameters to be estimated.
 
-\[
-Y_i = \mu_i + \varepsilon_i, \quad \text{with } \mu_i = \beta x_i, \quad i = 1, \ldots, n. \tag{85}
-\]
+In other words, the expected value of the response variable, $Y$, is a linear function of the explanatory variable, $x$. The intercept and slope parameters $\alpha$ and $\beta$ are referred to as the **regression parameters**.
 
-Here, \(\beta\) is an unknown parameter, and the \(\varepsilon_i\) are mutually independent zero-mean random variables, each with the same known variance \(\sigma^2\). That is:
+We typically write $Y_i$ for the random variable $Y$ associated with the observed explanatory variable value $x_i$, for $i = 1, \dots, n$, and write:  
+$$\mathbb{E}[Y_i] = \alpha + \beta x_i, \quad \text{for } i = 1, \dots, n.$$
+
+This can be rewritten as:  
+$$Y_i = \alpha + \beta x_i + \epsilon_i, \quad i = 1, \dots, n,$$  
+where $\epsilon_1, \dots, \epsilon_n$ are independent random variables (or errors) with:  
+$$\mathbb{E}[\epsilon_i] = 0 \quad \text{and} \quad \text{Var}(\epsilon_i) = \sigma^2.$$
+
+This is typically referred to as **simple linear regression**.
+
+For this tutorial we can ignore $\epsilon_i$ but for those that are intertsed $\epsilon_i$ refer to the error terms of our models, we assume that these are all 0 and have equal varaince, that is:
 
 \[
 \mathbb{E}[\varepsilon_i] = 0 \quad \text{and} \quad \text{Var}(\varepsilon_i) = \sigma^2, \quad \text{for } i = 1, \ldots, n,
 \]
 
-and \(\varepsilon_i\) and \(\varepsilon_j\) are independent for any pair of indexes \(i, j = 1, \ldots, n\), with \(i \neq j\). For the moment, we do not assume anything else about the distribution of the random variables \(\varepsilon = (\varepsilon_1, \ldots, \varepsilon_n)\).
+and \(\varepsilon_i\) and \(\varepsilon_j\) are independent for any pair of indexes \(i, j = 1, \ldots, n\), with \(i \neq j\). These tie into our model assumptions as  we assume that: 
 
+$\epsilon_i \sim^{i.i.d} \mathcal{N}(0, \sigma^2)$
+
+i.e, the errors are **identically indepentldy distrubuted** normal variables with mean 0 and varaince $\sigma^2$. Thus, lots of maths shows that beacyse tehse are normal our repsone variable is also normally distruvted:
+
+$Yi \sim^{i.i.d} \mathcal{N}(\mathbb{E}[Y], \sigma^2)$.
+
+This is not imprtant for this tutorial but it is a cool and fun!
+
+anyways back to the best part, how would we write our model mathematically:
+
+```r
+
+```
+Well we know that our respone variable $y_i$ is the tempature and our respone variavle $x_i$ is year. So our linear model would be a simple linear model and would look like:
+
+$Y_i = \alpha + \beta x_i + \epsilon_i, \quad i = 1, \dots, n,$ and we would have that $\mathbb{E}[Y] = \alpha + \beta x,$ where $\alpha$ and $\beta$ are unknown parameters to be estimated.
+
+But how do we find $\alpha$ and $\beta$. Well we see that when our explanatory variavle $x_i = 0$ all we are left woth is  $\alpha$  therefore $\alpha$  is our intercept! We would then call $\beta$ our slope but all that means is that  $\beta$ is the coefficant infront of our year so tells us how much our temperture changes year by year! To find these values we look at the smmary of our linear model.
+
+
+```r
+
+
+```
+
+Which should give us the following output:
 
 
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
