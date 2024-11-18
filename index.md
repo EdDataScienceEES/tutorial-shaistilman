@@ -84,18 +84,16 @@ Now we are ready to dive into the world of model selection!
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
 Credits: Matus Seci
 
-Data tranformations represent procedure where a mathematical function is equally applied to all points in the dataset. In this tutorial, we will consider transformations to be mainly describing situation where the mathematical function we apply is **non-linear**, i.e. the effect of applying the function to a point with a low value is not equal to the effect of applying the function to a point with a large value. As we mentioned in the introduction, probably the main reason to use data transformations is to adjust data distribution to fit into the assumptions of a model we want to use. Since explaining statistical concepts is always easier with examples, let's jump straight into it!
+Writing linear models mathematically is useful skill and helps us visualise and understadn what our code is doing and what linear models are all about!
 
 To start off, open a new R script in RStudio and write down a header with the title of the script (e.g. the tutorial name), your name and contact details and the last date you worked on the script.
 
-In the following parts we will work with the data from the [Living Planet Index](https://livingplanetindex.org/home/index) which is an open-source database containing population data of a large number of species from all around the planet. In each part of the tutorial we will focus on a population of a different species. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use `install.packages('package_name')` to install them before loading them.
-
 ```r
-# Coding Club Tutorial - Transforming and scaling data
-# Matus Seci, matusseci@gmail.com
-# 29/11/2021
+# Coding Club Tutorial - Model Selection
+# Shai Stilman, s2183612@ed.ac.uk
+# 18/11/24
 
-library(tidyverse)  # contains dplyr (data manipulation), ggplot2 (data visualization) and other useful packages
+library(tidyverse)  # contains ggplot2 (data visualization) and other useful packages
 library(cowplot)  # making effective plot grids
 library(MASS)  # contains boxcox() function
 library(ggeffects)  # model predictions
@@ -104,6 +102,16 @@ library(broom)  # extracting model summaries
 # Import Data
 LPI_species <- read.csv('LPI_species.csv', stringsAsFactors = FALSE)  # remember to change the filepath appropriately  
 ```
+
+ We will start with a simple linear model. 
+ 
+Data tranformations represent procedure where a mathematical function is equally applied to all points in the dataset. In this tutorial, we will consider transformations to be mainly describing situation where the mathematical function we apply is **non-linear**, i.e. the effect of applying the function to a point with a low value is not equal to the effect of applying the function to a point with a large value. As we mentioned in the introduction, probably the main reason to use data transformations is to adjust data distribution to fit into the assumptions of a model we want to use. Since explaining statistical concepts is always easier with examples, let's jump straight into it!
+
+
+
+In the following parts we will work with the data from the [Living Planet Index](https://livingplanetindex.org/home/index) which is an open-source database containing population data of a large number of species from all around the planet. In each part of the tutorial we will focus on a population of a different species. Let's load it into our script along with the packages we will use in this part of the tutorial. If you do not have some of these packages installed, use `install.packages('package_name')` to install them before loading them.
+
+
 
 Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
