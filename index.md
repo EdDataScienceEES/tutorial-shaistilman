@@ -20,7 +20,7 @@ tags: modelling
 
 # Steps:
 
-1. [**Introduction**](#intro)
+1. [**Introduction**](#Intro)
   - [Prerequisites](#Prerequisites)
   - [Data and Materials](#DataMat)
 2. [**Writing Models Mathematically**](#maths)
@@ -44,7 +44,7 @@ tags: modelling
 8. [**Challenge**](#Challenge)
 
 # 1. Introduction
-{: #intro}
+{: #Intro}
 
 Data exists in diverse forms, with varying structures, sizes, and complexities. Consequently, linear models—used to explain and predict data behavior—must be flexible enough to accommodate these variations. In environmental research, for instance, datasets often feature categorical variables that require specialized handling to ensure accurate and meaningful analysis. Additionally, as datasets grow larger and more intricate, it becomes increasingly important to include only the most relevant variables in linear models. This approach prevents overcomplication and mitigates the risk of overfitting, which can undermine the model's reliability and generalizability.
 
@@ -95,7 +95,7 @@ For example, if we are analyzing the population of birds in the UK, the categori
 Now that we understand the basics, let’s start with how we can write linear models with **continuous variable** mathematically and then move to models that include factor variables.
 
 ## Linear Models with Continuous Variables
-
+{: #simple}
 Suppose we have $n$ observations, where each observation corresponds to a response variable, $y_i$, treated as a realization of a random variable, $Y_i$. The response variable has an expected value, $\mu_i = \mathbb{E}[Y_i]$, which depends on the associated predictor (explanatory variable), $x_i$.
 
 The simplest case of linear regression assumes:
@@ -287,6 +287,7 @@ $Y_i = -242.7994 +  51.1753 x_{i,1} +   9.7748 x_{i,2} + \epsilon_i, \quad i = 1
 Now that we have mastered writiing equations mathematically when we have continous variables lets have a look at what we do when we have factor variables !
 ## Linear Models with Categorical Variables
 
+{: #cat}
 In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
 Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
 
