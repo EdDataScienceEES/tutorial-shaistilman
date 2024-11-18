@@ -208,6 +208,7 @@ summary(aatemp_lm)
 ```
 Which gives the following output:
 
+![Summary Output](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/simple_linear_model_summary.png)
 
 From the output:
 - $\alpha = 46.693396$, which means that at year 0 (1854), the mean temperature was $46.693396^\circ\mathrm{F}$.
@@ -271,6 +272,7 @@ Lets look at the summary of our linear model to find our unknown paramaters: $\a
 #finding alpha and our beta's
 summary(uswages_lm)
 ```
+![Summary Output]()
 
 Which gives the following output
 ## Linear Models with Categorical Variables
