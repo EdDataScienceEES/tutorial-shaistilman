@@ -90,13 +90,19 @@ summary(butterfat_interact_lm )
 
 ## One-Way ANOVA 
 
+#no interaction:
 #model we are intersted in:
 butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
 
 #ANOVA
 anova(butterfat_lm)
 
+#interaction:
+#model we are intersted in:
+butterfat_lm_interact <- lm(Butterfat ~ Breed*Age, butterfat_data)
 
+#ANOVA
+anova(butterfat_lm_interact)
 
 
 ## Two-Way ANOVA
