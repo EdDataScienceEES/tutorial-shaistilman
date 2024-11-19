@@ -410,6 +410,41 @@ By representing categorical factors as dummy variables, this framework allows mo
 
 Lets have a look at an example!
 
+In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
+Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
+
+```r
+# Import Data
+load("data/butterfat.rda")  # Load the data
+butterfat_data <- butterfat   #assign name
+
+str(butterfat_data)
+summary(butterfat_data)
+
+```
+
+We have Breed as a factor with 5 levels, Ayreshire, Canadian, Guernesy, jersy and Holstein-Fresian. Age is a facor with 2 levls `2 year` and `Mature`.
+
+We can see that the dataset contains information about 100 observation. Lets start by constructing a linear model inevestigtong how butterfat content changes across doffernet breeds.
+
+```r
+#making model
+butterfat_lm <- lm(Butterfat ~ Breed, butterfat_data)
+```
+
+So how would we write this mathematically?  Before we start this lets have a quick look at the summary
+```r
+#finding alpha and beta
+summary(butterfat_lm)
+```
+This code gives us the following summary 
+
+![Sum Output](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_lm_summary.png)
+
+We had 5 levels but we only have the intercept and 4 levels, our Ayreshire breed is missing!
+
+Well since Ayreshire was the first level of the factor it has infact been taken into the intercept so all the other numbers are the difference between butterfat in Ayreshire cows and the other breeeds. For example Candaian cows have roughly $ 0.38$ more butterfat content then Ayreshire cows.
+
 
 
 ---
@@ -539,17 +574,4 @@ Whether modeling the interaction between factors or between factors and continuo
 
 
 
-In this next section we will look at the `butterfat` dataset which contains the average butterfat content (percetanges) of milk for random sampes of twenty cows (ten 2 year old cows and ten mature cows (greater than four years old)) from each of the five breeds. 
-Now we can look at the basic structure of the dataframe to get some idea of the different variables it contains.
-
-```r
-# Import Data
-butterfat <- data('butterfat')
-str(butterfat)
-summary(butterfat)
-```
-
-We have Breed as a factor with 5 levels, Ayreshire, Canadian, Guernesy, jersy and Holstein-Fresian. Age is a facor with 2 levls `2 year` and `Mature`.
-
-We can see that the dataset contains information about 100 observation. In this part we will look at how we can model a linear model inebstigtong how butterfat content changes across doffernet breeds nad differnet ages.
 
