@@ -321,32 +321,45 @@ $\mu_i =
  \alpha + \omega_2 & \text{if rat is enormous.} 
 \end{cases}$
 
-This formulation ensures each size group has its own mean insulin level.
+So our model fully written out would looks like 
 
----
+$\mathbf{\mu} = \mathbf{X} * \mathbf{\beta}$, which equals
 
-#### Dummy Variable Representation
+$\begin{bmatrix}
+\mu_1 \\
+\mu_2 \\
+\mu_3 \\
+\mu_4 \\
+\mu_5 \\
+\mu_6 \\
+\mu_7 \\
+\mu_8 \\
+\mu_9
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+1 & 1 & 0 \\
+1 & 1 & 0 \\
+1 & 1 & 0 \\
+1 & 0 & 1 \\
+1 & 0 & 1 \\
+1 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\alpha \\
+\beta_1 \\
+\beta_2
+\end{bmatrix}.
+$
 
-To fit this model using dummy variables, we introduce dummy variables:
+This formulation ensures each size group has its own mean insulin level. However, we have to make our model **identifiable** which just means that the one level of the factor is designated as the **basline group**, representing the baseline level against which all other groups are compared. This group corresponds to the case where all dummy variables for the factor are set to 0. Typically, the first level of the factor is chosen as the reference group, but this choice can be adjusted based on context or research objectives.  
 
-- $x_{0,i} = 
-\begin{cases} 
-  1 \text{if rat is fat,} \\
-  0 \text{otherwise.}
-\end{cases}$
-- $x_{1,i} = 
-\begin{cases} 
-  1 \text{if rat is very fat,} \\
-  0 \text{otherwise.}
-\end{cases}$
-- $x_{2,i} = \begin{cases} 
-  1 \text{if rat isenormous,} \\
-  0 \text{otherwise.}
-\end{cases}$
+To make this work for our rat model we would let $\beta_0 =0$ serving as the basline group. The model can then be written as:
 
-For "fat" rats, both $x_{1i} = 0$ and $x_{2i} = 0$, serving as the **reference category**. The model can then be written as:
-
-$\mu_i = \alpha + \beta_1 x_{1i} + \beta_2 x_{2i}.$
+$\mu_i = \alpha + \beta_1 + \beta_2.$
 
 Here:
 - $\alpha$: Expected insulin level for "fat" rats (baseline).
@@ -403,7 +416,7 @@ where:
 Unlike continuous predictor variables, dummy variables represent distinct groups rather than measured values. This distinction has key implications for their usage and interpretation:  
 
 - **Group Inclusion Behavior**: Dummy variables are typically treated as a cohesive set during model selection. Either all the dummy variables associated with a factor are included in the model, or none are. This ensures the factor is analyzed as a whole, reflecting its categorical nature.  
-- **Reference Group**: One category is designated as the reference group, representing the baseline level against which all other groups are compared. This group corresponds to the case where all dummy variables for the factor are set to 0. Typically, the first level of the factor is chosen as the reference group, but this choice can be adjusted based on context or research objectives.  
+- **Baseline Group**: One category is designated as the basline group, representing the baseline level against which all other groups are compared. This group corresponds to the case where all dummy variables for the factor are set to 0. Typically, the first level of the factor is chosen as the reference group, but this choice can be adjusted based on context or research objectives.  
 - **Interpretation of Coefficients**: The coefficients of dummy variables quantify the difference in the response variable between each group and the reference group. For example, a coefficient of 3 for a dummy variable implies that the corresponding group has a response value 3 units higher than the reference group, holding all else constant.  
 
 By representing categorical factors as dummy variables, this framework allows models to incorporate group-based differences effectively, while ensuring clarity in how results are interpreted relative to a baseline.
@@ -443,7 +456,8 @@ This code gives us the following summary
 
 We had 5 levels but we only have the intercept and 4 levels, our Ayreshire breed is missing!
 
-Well since Ayreshire was the first level of the factor it has infact been taken into the intercept so all the other numbers are the difference between butterfat in Ayreshire cows and the other breeeds. For example Candaian cows have roughly $ 0.38$ more butterfat content then Ayreshire cows.
+Well since Ayreshire was the first level of the factor it has infact been taken into the intercept so all the other numbers are the difference between butterfat in Ayreshire cows and the other breeeds. For example Candaian cows have roughly $ 0.38$ more butterfat content then Ayreshire cows. So how would we write this mathematically?
+
 
 
 
