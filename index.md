@@ -580,7 +580,9 @@ In this section, explore the **F-statistic** and the **Akaike Information Criter
 
 The **F-statistic** assesses whether a group of predictors in a model, or the overall model itself, significantly improves the fit compared to a simpler baseline model (e.g., one without those predictors). It is calculated as the ratio of explained variance to unexplained variance, standardized by their respective degrees of freedom. 
 
-The **p-value** associated with the F-statistic measures the probability of observing such a result (or one more extreme) if the null hypothesis is true—i.e., if the additional predictors have no real effect. A **p-value less than 0.05** suggests that the predictors or model terms in question significantly contribute to explaining the response variable, at a 95% confidence level.
+A **large F-statistic** indicates that the model or predictors significantly explain the variability in the dependent variable, suggesting that the model improves the fit compared to a simpler model. It means the predictors are likely contributing meaningfully to the model. On the other hand, a **small F-statistic** suggests that the model does not explain much of the variability, indicating that the predictors may not be significantly affecting the outcome and the model might not be useful. In essence, a large F-statistic suggests a strong model, while a small one suggests a weak or ineffective model.
+
+The **p-value** associated with the F-statistic, tell us the most in terms of model selection. It measures the probability of observing such a result (or one more extreme) if the null hypothesis is true—i.e., if the additional predictors have no real effect. A **p-value less than 0.05** suggests that the predictors or model terms in question significantly contribute to explaining the response variable, at a 95% confidence level.
 
 When interpreting outputs like those from our  `summary()`, or the functions we will look at such as `anova()`, or `drop1()`, in R a significant F-statistic (with a low p-value) indicates that the model terms being tested add meaningful information, and their inclusion of "extra predictors" is justified.
 
@@ -604,9 +606,96 @@ Now we have our evaluation metrics we can start having a look at our R functions
 ## 4.2. Method I: ANOVA
 {: #ANOVA}
 
-Please make sure you have completed [this ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/) before you complete this section of the tutorial on one-way ANOVA. In this tutorial we will look at both one-way ANOVA and **two-way ANOVA**.
+Please make sure you have completed [this One-Way ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/) before you complete this section of the tutorial as it assumes you already know how to do this!
 
-### 4.2.1 Two-Way ANOVA
+In this tutorial we will look at both one-way ANOVA and **two-way ANOVA**. Before we get into Two-Way ANOVA lets have a quick recap of how we interpret the output of a One-Way ANOVA table.
+
+### 4.2.1 Recap of One-Way ANOVA
+
+The best way to do this is to look at an example. Lets think back to our butterfat data and consider the model investigating the affect of breed and age on butterfat content in our cows, with no interaction term.
+
+```r
+butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+summary(butterfat_lm)
+```
+Mathematically our model is:
+
+Remeber that we read the One-Way ANOVA from the **bottom up**! When we apply the `anova()` function the model we get the following output:
+
+![One-Way](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_one_ANOVA.png)
+
+We start with the bottom of the table:
+In the context of model selection, here's what each section of the ANOVA table tells us, especially regarding degrees of freedom (df) and their interpretation:
+
+**1. Residuals:**
+- *Interpretation*:
+  - The residuals represent the unexplained variation after accounting for the effects of Breed and Age. 
+  - The df for residuals is 94, which represents the remaining degrees of freedom after accounting for the effects of the variables in the model. In total, there were 100 data points (n = 100), and since 6 parameters are estimated in the model (5 for Breed + 1 for Age), the residual degrees of freedom are 100 - 6 = 94.
+  - In the context of this tutorial, the residual row does not tell us much in terms of how we should select our model.
+
+**2. Age:**
+- Null hypothesis ($H_0): Age does not affect butterfat content, i.e 
+- *Interpretation*:
+  - F value = 1.5976: A smaller F value suggests the effect of age on butterfat content is relatively weak compared to breed.
+  - p-value = 0.2094: Since this p-value is greater than 0.05, we fail to reject the null hypothesis, meaning Age does not significantly affect butterfat content.
+- *Degrees of Freedom (df)*:
+  - There is *1 df**for Age. This is because *Age* is a single factor with two levels (e.g., young and old), so the df is the number of levels minus one (2 - 1 = 1).
+
+**3. Breed:**
+- *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
+- *Interpretation*:
+  - F value = 50.1150: A large F value indicates a large effect of breed on butterfat content relative to the unexplained variation (residuals).
+  - p-value < 2e-16: The extremely small p-value means we reject the null hypothesis and conclude that Breed significantly affects butterfat content.
+- Degrees of Freedom (df): 
+  - There are 4 degrees of freedom for the **Breed** variable. Since the model has 5 levels of the **Breed** factor, the df is one less than the number of levels (5 - 1 = 4). 
+
+Thus from this output we would conclude that Breed has a significant impact on butterfat content, while Age does not and as such we should consdier a model that does *not* include factor variable Age.
+
+What if we have an interaction term? Nothing!
+
+We treat the ineraction term has a variable and test it as we tested above. For example if we consider the model above with an interaction term, i.e:
+
+```r
+#construct model
+butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
+#look at summary
+summary(butterfat_lm)
+```
+From the summary we can write the model mathematically as:
+
+So if we now applied `anova()`:
+
+```r
+#apply ANOVA
+anova(butterfat_interact_lm)
+```
+Which gives us the following output:
+
+![Int_Anova](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_one_interact_ANOVA.png)
+
+Starting from teh bottom up we can interpret the table as follows:
+
+**1. Residuals**:
+   - The residuals represent unexplained variation in the data. With 90 degrees of freedom (100 data points - 6 parameters estimated), they reflect the variance not explained by the model.
+
+**2. Breed:Age Interaction**:
+   - *Null hypothesis ($H_0$)*: There is no interaction effect between Breed and Age on butterfat content, i.e,
+   - *Interpretation*: The small F-value (0.7421) and the large p-value ($0.5658 > 0.05$) indicate that the interaction between Breed and Age does not significantly improve the model. So we fail to reject the null hypothesis, suggesting that the interaction term is not necessary in the model.
+   - *Degrees of Freedom (df)*: There are 4 degrees of freedom for the interaction term, which reflects the product of the levels of the two factors (Breed with 5 levels and Age with 2 levels), minus 1 for each factor (5 - 1 = 4).
+
+**3. Age**:
+   - *Null hypothesis ($H_0$)*: Age does not affect butterfat content, i.e,
+   - *Interpretation**: The F-value (1.5801) is small, and the p-value (0.2120) is greater than 0.05, so we fail to reject the null hypothesis. This suggests that Age does not significantly affect butterfat content.
+   - *Degrees of Freedom (df)*: Age has 1 degree of freedom since it is a single factor with two levels (2 - 1 = 1).
+
+**4. Breed**:
+   - *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
+   - *Interpretation*: The large F-value (49.5651) and the extremely small p-value (<2e-16) suggest that Breed significantly affects butterfat content. We reject the null hypothesis.
+   - *Degrees of Freedom (df)*: There are 4 degrees of freedom for Breed because it has 5 levels (5 - 1 = 4).
+
+Based on this ANOVA table, we would conclude that Breed significantly affects butterfat content, while Age and the Breed:Age interaction do not. Therefore, a model excluding Age and the interaction term would be more appropriate fit for our data.
+
+### 4.2.2 Two-Way ANOVA
 
 Two-way ANOVA is a statistical method used for model selection to test a **full model** against a **sub model**. A full model contains **all** the terms in the model we want to test and the sub model contains **some** of the terms in our model. This basically tests if not including some variables improves our model.
 
@@ -614,20 +703,18 @@ In the context of this tutorial we will use Two-Way ANOVA when we have a model w
 
 To do Two-Way Anova in R we use the `anova()` function and we call the following `anova(submodel, full model)`.
 
-So know we know what Two-Way Anova does and how to do it but how do we understand the output of ANOVA? The best way to explain this is to look at an example. Lets think back to our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
+So know we know what Two-Way Anova does and how to do it but how do we understand the output of ANOVA? The best way to explain this is to look at an example. Lets continue with our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
 
 ```r
 # full model:
 butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
-summary(butterfat_interact_lm)
 
 # sub model:
 butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
-summary(butterfat_lm)
 ```
 These models are both looking at how breed and age affect butterfat content but the first model (butterfat_interact_lm) assumes that there is an interaction effect between breed and age. This means it considers the possibility that the effect of age on butterfat content depends on the breed, or that the effect of breed on butterfat content depends on age. In other words, the second model (butterfat_lm) assumes that breed and age affect butterfat content independently, with no interaction between the two factors.
 
-We can write these models mathematically looking each of these models summary's respectively.
+From the previous section we have seen that can write these models mathematically by looking each of these models summary's respectively.
 
 We get that:
 
@@ -669,5 +756,6 @@ The most important part of the anova table is the `Pr(>F)` collumn, as it tells 
 
 In this example the p-value (0.5658) is much greater than 0.05, so we fail to reject the null hypothesis. This means that adding the interaction term does not significantly improve the model's ability to explain variations in `Butterfat`. 
 
-In conclusion, the simpler model (Model 1: `Butterfat ~ Breed + Age`) is sufficient, and including the interaction term does not add meaningful predictive power, so we **select** Model 1.
+In conclusion, the simpler model (Model 1: `Butterfat ~ Breed + Age`) is sufficient, and including the interaction term does not add meaningful predictive power, so we **select** Model 1. This matches what we did above with One-Way ANOVA.
+
 
