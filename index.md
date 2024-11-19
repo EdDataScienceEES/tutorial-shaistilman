@@ -473,9 +473,7 @@ Factor-factor interactions are particularly useful in identifying whether certai
 
 When a continuous predictor variable (e.g., rat weight, $w_i$) interacts with a factor (e.g., sex, $k$), the model extends to:
 
-\[
-\mu_i = \alpha + \gamma_k + \beta w_i + \delta_k w_i,
-\]
+$\mu_i = \alpha + \gamma_k + \beta w_i + \delta_k w_i,$
 
 where:
 - $\alpha$: The intercept (expected value of $\mu_i$ for the reference sex when $w_i = 0$).
@@ -498,9 +496,7 @@ As the number of factors increases, so do the possible interactions:
 - **Three-way interactions**: Combined effects of three factors (e.g., size, sex, and diet), where the interaction term $\delta_{jkl}$ accounts for how the size-sex relationship depends on diet.
 
 Higher-order interactions can quickly lead to complex models with many parameters. For example, with three factors, the model could include:
-\[
-\mu_i = \alpha + \omega_j + \gamma_k + \lambda_l + \delta_{jk} + \delta_{jl} + \delta_{kl} + \delta_{jkl},
-\]
+$\mu_i = \alpha + \omega_j + \gamma_k + \lambda_l + \delta_{jk} + \delta_{jl} + \delta_{kl} + \delta_{jkl},$
 where $\lambda_l$ represents a third factor (e.g., diet) and $\delta_{jkl}$ captures the three-way interaction.
 
 #### Identifiability and Model Constraints
