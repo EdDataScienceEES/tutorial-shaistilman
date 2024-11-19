@@ -19,11 +19,11 @@
   - [Linear Models with Continous Variables](#simple)
   - [Linear Models with Factor (Categorical) Variables](#cat)
 3. [**Evaluation Metrics**](#eval)
-  - [P-value and Hypotheis Test](#pval)
+  - [F-Statistic](#f)
   - [AIC](#AIC)
-4. [**Method I: Step**](#step)
+4. [**Method I: Drop1**](#drop)
   - [`log` transformation](#log)
-5. [**MethodII: Drop1**](#Drop1)
+5. [**MethodII: Step**](#step)
   - [Standardization](#Standardization)
 6. [**MethodIII: ANOVA**](#Anova)
   - [Standardization](#Standardization)
@@ -565,19 +565,109 @@ Understanding interaction terms is crucial for:
 
 Whether modeling the interaction between factors or between factors and continuous variables, including these terms allows for more realistic and interpretable representations of the underlying data-generating process. However, care must be taken to avoid overfitting, particularly with limited sample sizes. Regularization techniques or hierarchical models may be employed to address this challenge in practice.
 
+---
+# 3. Evalution Metrics
+{: #eval}
+
+Now that we have mastered the mathematical formulation of our models, let’s shift our focus to the evaluation metrics used for model selection. While we are already familiar with the **p-value**, it’s important to remember that in general, we aim for a p-value less than 0.05. This threshold corresponds to a 95% significance level, which means there is only a 5% chance of observing the given data (or something more extreme) if the null hypothesis is true - If you've forgetten what a null hypothesis ($H_0$) please see [this ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/#hypothesis) - A p-value below 0.05 typically indicates that the predictor is statistically significant and contributes meaningfully to the model, beacuse we reject the null hypothsis that our predictor is insignificant.
+
+In this section, explore the **F-statistic** and the **Akaike Information Criterion (AIC)**. These metrics provide additional insights into model performance, helping us evaluate and compare models based on both their fit and complexity.
+
+---
+
+## 3.1 F-Statistic
+{: #f}
+
+The **F-statistic** assesses whether a group of predictors in a model, or the overall model itself, significantly improves the fit compared to a simpler baseline model (e.g., one without those predictors). It is calculated as the ratio of explained variance to unexplained variance, standardized by their respective degrees of freedom. 
+
+The **p-value** associated with the F-statistic measures the probability of observing such a result (or one more extreme) if the null hypothesis is true—i.e., if the additional predictors have no real effect. A **p-value less than 0.05** suggests that the predictors or model terms in question significantly contribute to explaining the response variable, at a 95% confidence level.
+
+When interpreting outputs like those from our  `summary()`, or the functions we will look at such as `anova()`, or `drop1()`, in R a significant F-statistic (with a low p-value) indicates that the model terms being tested add meaningful information, and their inclusion of "extra predictors" is justified.
+
+---
+
+## 3.2 AIC
+{: #AIC}
+
+The **Akaike Information Criterion (AIC)** is a measure used to compare the goodness of fit between statistical models while penalizing model complexity. It helps in selecting the best model among a set of candidates by balancing fit and simplicity. 
+
+A lower **AIC value** indicates a better trade-off between model accuracy and complexity. When comparing models, the model with the smallest AIC is typically preferred, as it suggests the most efficient explanation of the data with minimal overfitting.
+
+When we look at the output in the next section from our functions like `step()` in R, the AIC guides the selection process by iteratively adding or removing predictors to find the model with the optimal balance of fit and complexity. However, note that AIC values are relative, meaning they should only be compared between models fitted to the same dataset.
+
+---
+
+# 4. Model Selection
+
+Now we have our evaluation metrics we can start having a look at our R functions and understanding their output!
+
+## 4.2. Method I: ANOVA
+{: #ANOVA}
+
+Please make sure you have completed [this ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/) before you complete this section of the tutorial on one-way ANOVA. In this tutorial we will look at both one-way ANOVA and **two-way ANOVA**.
+
+### 4.2.1 Two-Way ANOVA
+
+Two-way ANOVA is a statistical method used for model selection to test a **full model** against a **sub model**. A full model contains **all** the terms in the model we want to test and the sub model contains **some** of the terms in our model. This basically tests if not including some variables improves our model.
+
+In the context of this tutorial we will use Two-Way ANOVA when we have a model with an *interaction term* and we want to see if this term is significant to our model. As such we are testing the null hypothesis, $H_0$, model without interaction term (sub-model) is better than model with interaction (full-model) against the alternative hypothesis, $H-1$, full model is better than submodel. If we fail to reject $H_0$, which we do when our p-value is less than 0.05, our full model is better and such we should keep our interaction term in the model. It then follows that if we reject $H_0$, which we do when our p-value is greater than 0.05, our sub model is better and such we should remove our interaction term in the model. 
+
+To do Two-Way Anova in R we use the `anova()` function and we call the following `anova(submodel, full model)`.
+
+So know we know what Two-Way Anova does and how to do it but how do we understand the output of ANOVA? The best way to explain this is to look at an example. Lets think back to our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
+
+```r
+# full model:
+butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
+summary(butterfat_interact_lm)
+
+# sub model:
+butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+summary(butterfat_lm)
+```
+These models are both looking at how breed and age affect butterfat content but the first model (butterfat_interact_lm) assumes that there is an interaction effect between breed and age. This means it considers the possibility that the effect of age on butterfat content depends on the breed, or that the effect of breed on butterfat content depends on age. In other words, the second model (butterfat_lm) assumes that breed and age affect butterfat content independently, with no interaction between the two factors.
+
+We can write these models mathematically looking each of these models summary's respectively.
+
+We get that:
+
+Full Model: 
+
+Sub Model:
 
 
+It is clear that the full model has *more terms* hence, the name full model. So when we do apply the `anova()` function to these models we will be testing the following:
+
+$H_0: =0$, i.e sub model is a better fit for our data vs.
+$H_1: \neq 0$ i.e full model is a better fit for our data.
 
 
+So now we know what we are testing, lets apply the `anova()` function!
+```r
+#ANOVA
+anova(butterfat_lm, butterfat_interact_lm)
+```
+This gives us the following output:
+
+![Output](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_ANOVA.png)
 
 
+So what does this mean?
 
+| **Column**       | **Explanation**                                                                                          |
+|-------------------|----------------------------------------------------------------------------------------------------------|
+| **Res.Df**        | Residual Degrees of Freedom: The number of observations (100) minus the number of parameters in the model. Model 1 has 94 (6 paramaters), and Model 2 has 90 (10 paramaters, 4 more than model 1 due to adding the interaction term). |
+| **RSS**           | Residual Sum of Squares: Measures the total variation in the dependent variable (Butterfat) unexplained by the model. Model 1 has 16.094, and Model 2 has a slightly smaller value of 15.580. |
+| **Df**            | Difference in degrees of freedom: The reduction in degrees of freedom between the models, which is 4 (from adding interaction terms). |
+| **Sum of Sq**     | The additional variation explained by the interaction term: 0.51387. |
+| **F**             | F-statistic: Tests whether the additional variation explained by the interaction term is significant relative to the unexplained variation (RSS). Here, \( F = 0.7421 \). |
+| **Pr(>F)**        | p-value: The probability of observing an F-statistic as large or larger if the null hypothesis is true. A large p-value (0.5658) indicates no significant improvement with the interaction term. |
 
+**So how can we interpret this?**
 
+The most important part of the anova table is the `Pr(>F)` collumn, as it tells us the p-value of our hypothesis test and whether we should reject the **null hypothesis** that the interaction term does not significantly improve the model (i.e., `Breed` and `Age` affect `Butterfat` independently).
 
+In this example the p-value (0.5658) is much greater than 0.05, so we fail to reject the null hypothesis. This means that adding the interaction term does not significantly improve the model's ability to explain variations in `Butterfat`. 
 
-
-
-
-
+In conclusion, the simpler model (Model 1: `Butterfat ~ Breed + Age`) is sufficient, and including the interaction term does not add meaningful predictive power, so we **select** Model 1.
 
