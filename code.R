@@ -82,3 +82,19 @@ butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
 
 #finding alpha and beta
 summary(butterfat_interact_lm )
+
+
+
+#Model Selection ----
+##ANOVA ----
+
+# full model:
+butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
+
+# sub model:
+butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+
+#ANOVA
+#anova(submodel, full model)
+anova(butterfat_lm, butterfat_interact_lm)
+
