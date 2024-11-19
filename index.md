@@ -88,6 +88,8 @@ Now we are ready to dive into the world of model selection!
 
 <center> <img src="{{ site.baseurl }}/assets/img/tutorials/data-scaling/stork_photo.JPG" alt="Img" style="width: 800px;"/> </center>
 
+![Cartoon](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/equation_cartoon.png)
+
 Writing linear models mathematically is a useful skill that helps us visualize and understand what our code is doing and what linear models are all about! Before diving into the details, let’s first review the types of variables used in linear models. We focus on **continuous** and **factor (categorical)** variables.
 
 - **Continuous variables** are numerical values that can take any value within a range, e.g., years, population counts, or temperatures.
@@ -327,17 +329,17 @@ This formulation ensures each size group has its own mean insulin level.
 
 To fit this model using dummy variables, we introduce dummy variables:
 
-- $\x_{0,i} = 
+- $x_{0,i} = 
 \begin{cases} 
   1 \text{if rat is fat,} \\
   0 \text{otherwise.}
 \end{cases}$
-- $\x_{1,i} = 
+- $x_{1,i} = 
 \begin{cases} 
   1 \text{if rat is very fat,} \\
   0 \text{otherwise.}
 \end{cases}$
-- $\x_{2,i} = \begin{cases} 
+- $x_{2,i} = \begin{cases} 
   1 \text{if rat isenormous,} \\
   0 \text{otherwise.}
 \end{cases}$
@@ -379,8 +381,7 @@ $
 
 The corresponding design matrix ($X$) for the dummy variables is:
 
-$
-X = 
+$X = 
 \begin{bmatrix}
 1 & 0 & 0 \\
 1 & 0 & 0 \\
@@ -391,20 +392,25 @@ X =
 1 & 0 & 1 \\
 1 & 0 & 1 \\
 1 & 0 & 1
-\end{bmatrix},
-$
+\end{bmatrix},$
 
 where:
 - The first column represents the intercept ($\alpha$).
-- The second and third columns represent the dummy variables $x_{1i}$ and $x_{2i}$, respectively.
+- The second and third columns represent the dummy variables $x_{1,i}$ and $x_{2,i}$, respectively.
 
 ### Key Differences Between Dummy and Continuous Variables
 
-Unlike continuous predictor variables, dummy variables represent distinct groups rather than measured values. As a result:
-- **Group Behavior**: Dummy variables are treated as a group during model selection. Either all associated dummy variables for a factor are included, or none are.
-- **Interpretation**: Coefficients of dummy variables describe differences between groups relative to the reference group.
+Unlike continuous predictor variables, dummy variables represent distinct groups rather than measured values. This distinction has key implications for their usage and interpretation:  
 
-For example, $\beta_1$ describes the difference between "very fat" rats and "fat" rats, while $\beta_2$ describes the difference between "enormous" rats and "fat" rats.
+- **Group Inclusion Behavior**: Dummy variables are typically treated as a cohesive set during model selection. Either all the dummy variables associated with a factor are included in the model, or none are. This ensures the factor is analyzed as a whole, reflecting its categorical nature.  
+- **Reference Group**: One category is designated as the reference group, representing the baseline level against which all other groups are compared. This group corresponds to the case where all dummy variables for the factor are set to 0. Typically, the first level of the factor is chosen as the reference group, but this choice can be adjusted based on context or research objectives.  
+- **Interpretation of Coefficients**: The coefficients of dummy variables quantify the difference in the response variable between each group and the reference group. For example, a coefficient of 3 for a dummy variable implies that the corresponding group has a response value 3 units higher than the reference group, holding all else constant.  
+
+By representing categorical factors as dummy variables, this framework allows models to incorporate group-based differences effectively, while ensuring clarity in how results are interpreted relative to a baseline.
+
+Lets have a look at an example!
+
+
 
 ---
 
