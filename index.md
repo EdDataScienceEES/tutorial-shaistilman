@@ -1,11 +1,3 @@
----
-layout: tutorial
-title: Model Selection 
-subtitle: Understanding how to do model selection for linear models with categorical variables.
-date: 2024-11-17 12:00:00
-author: Shai Stilman
-tags: modelling
----
 
 
 # Tutorial aims:
