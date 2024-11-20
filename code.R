@@ -67,7 +67,7 @@ summary(butterfat_lm)
 
 ##Linear model with multiple factor ----
 
-# Import Data
+
 #making model
 butterfat_more_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
 
@@ -76,7 +76,7 @@ summary(butterfat_more_lm)
 
 ##Linear model with factor-factor interaction ----
 
-# Import Data
+
 #making model
 butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
 
@@ -131,3 +131,15 @@ drop1(butterfat_lm)
 butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
 #apply drop1
 drop1(butterfat_interact_lm)
+
+##Step
+# Import Data
+load("data/africa.rda")  # Load the data
+africa_data <- africa   #assign name
+
+#define linear model
+africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + pctvote + popn + size
++ numelec + numregim, africa_data)
+
+#apply step()
+step(africa_lm)
