@@ -116,3 +116,15 @@ butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
 #anova(submodel, full model)
 anova(butterfat_lm, butterfat_interact_lm)
 
+
+# Step-Wise Selection
+
+##Drop1
+
+#no interaction
+butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+drop1(butterfat_lm)
+
+
+#interaction
+butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
