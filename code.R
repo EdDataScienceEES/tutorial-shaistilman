@@ -138,7 +138,7 @@ load("data/africa.rda")  # Load the data
 africa_data <- africa   #assign name
 
 #define linear model
-africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + pctvote + popn + size
+africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size
 + numelec + numregim, africa_data)
 
 #apply step()
