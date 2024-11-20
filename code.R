@@ -133,13 +133,22 @@ butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
 drop1(butterfat_interact_lm)
 
 ##Step
+
 # Import Data
 load("data/africa.rda")  # Load the data
 africa_data <- africa   #assign name
-
+#no interaction
 #define linear model
 africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size
 + numelec + numregim, africa_data)
 
 #apply step()
 step(africa_lm)
+
+#interaction 
+#define linear model
+africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
+                + numelec + numregim, africa_data)
+
+#apply step()
+step(africa_interact_lm)
