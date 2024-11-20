@@ -1042,7 +1042,6 @@ summary(africa_lm)
 ```
 From the summary and section 1 we know that this model can be written mathematically as:
 
-
 This is a huge model with lots of predictors. How can we be sure that all these predictors are necessary and we are not overfitting? The `step` fucntion!
 
 Lets apply the `step` function and see what happens:
@@ -1148,6 +1147,92 @@ What happens if we have an interaction term? Nothing! The `step` function treats
 
 ### Example With an Interaction Term
 
-Lets have a look at an example think back to 
+Lets have a look at an example think back to our `africa_interact_lm` model where we assumed there was interaction betweeen the number years country ruled by military oligarchy from independence to 1989 and the number of legal political parties in 1993.
 
+```r
+#define linear model with interaction
+africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
++ numelec + numregim, africa_data)
+```
+This is a very complex model with lots of predictors. Lets applt the  `step` fucntion to reduce our model so we can be sure that all these predictors are necessary and we are not overfitting? 
+
+```r
+#apply step()
+step(africa_interact_lm)
+```
+This gives us the following output:
+
+![step(africa_interact)_1/2](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/step(africa_interact)_1%3A2.png)
+![step(africa_interact)_2/2](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/step(africa_interact)_2%3A2.png)
+
+We we interpret as follows:
+#### Step 1: Initial Model
+
+The starting model is:
+
+```r
+Start:  AIC=28.42
+miltcoup ~ oligarchy * parties + as.factor(pollib) + popn + size + 
+    numelec + numregim
+```
+
+This model includes the interaction term `oligarchy*parties` and other predictors: `as.factor(pollib)`, `popn`, `size`, `numele`, and `numregim`, with an initial AIC of 28.42.
+
+We get the following output:
+
+```r
+                    Df Sum of Sq    RSS    AIC
+- size               1    0.5431 51.871 26.866
+- numregim           1    0.6285 51.957 26.935
+- numelec            1    2.3906 53.719 28.336
+<none>                           51.328 28.424
+- as.factor(pollib)  2    6.4664 57.795 29.407
+- popn               1    4.0301 55.358 29.599
+- oligarchy:parties  1    5.9209 57.249 31.009
+```
+We see that this output has the same format as what we have seen in the previous example, we just have the term `oligarchy:parties` which represents our interaction term.
+From this output, we can observe:
+- **Removing `size`** decreases the AIC from 28.42 to 26.87, indicating that `size` can be removed without negatively impacting the model's performance.
+- **Removing `oligarchy:parties`** leads to a much higher AIC (31.01), suggesting that the interaction term is important for the model.
+
+This repeats untill we get to our final model in exactly the same way as our previous example.
+
+The final model, with the lowest AIC, in this example is:
+
+```r
+Call:
+lm(formula = miltcoup ~ oligarchy + parties + as.factor(pollib) + 
+    popn + oligarchy:parties, data = africa_data)
+```
+
+The coefficients for the final model are:
+
+```r
+Coefficients:
+       (Intercept)           oligarchy             parties  as.factor(pollib)1  
+          1.885898            0.065015           -0.002222           -0.729212  
+as.factor(pollib)2                popn   oligarchy:parties  
+         -1.590386            0.021884            0.005076
+```
+
+This table shows the estimated effect of each predictor on the dependent variable `miltcoup`, with the interaction term included in the final model.
+ 
 ---
+
+Now that we've covered a range of individual methods for model selection—evaluation metrics like **F-statistics**, **AIC**, **RSS**, and **Sum of Squares**, as well as **ANOVA** and **stepwise selection**—the next logical step is to understand how to combine these techniques to make more robust and informed decisions when selecting the best model for our data.
+
+Why do we use all of these methods together?
+
+Each of these methods provides a unique perspective on the model, and by considering them in combination, we get a fuller understanding of how well the model fits, how much complexity it introduces, and whether it's the most appropriate choice for the data at hand:
+
+1. **Evaluation Metrics** (F-statistics, AIC, RSS, Sum of Squares) give us quantitative measures to compare the performance of different models. AIC, for example, balances model fit and complexity, while RSS focuses on the residuals and how well the model explains the variance in the data. F-statistics and p-values allow us to test the significance of predictors in our models.
+
+2. **ANOVA** helps us compare models with different factors or interaction terms. One-way ANOVA can be useful when testing the impact of one categorical predictor, while two-way ANOVA allows us to evaluate the interaction between two categorical predictors. These methods can reveal important insights into how predictors work together to explain the variability in the response.
+
+3. **Stepwise Selection** (using functions like **step()** and **drop1()**) provides a method for iteratively adding or removing predictors from the model based on criteria such as AIC. It helps refine the model by identifying the most influential predictors, minimizing overfitting and underfitting. Stepwise selection offers a data-driven approach to model simplification.
+
+By combining all of these methods, we aim to strike a balance between model complexity and accuracy. For example, we might use **AIC** for model comparison while considering **ANOVA** to ensure the right interaction terms are included. We then might apply **stepwise selection** to iteratively refine the model by removing unnecessary predictors. 
+
+In practice, we use these methods together because no single technique gives a complete picture. By leveraging multiple approaches, we can make more informed decisions, ensure model robustness, and avoid pitfalls like overfitting or underfitting. In the next section, we will demonstrate how to apply these methods together using real data in **R** to guide the process of model selection in a cohesive, step-by-step manner.
+
+# 6. Bringing It All Together
