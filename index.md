@@ -15,9 +15,9 @@
 1. Understand why we do model selection.
 2. Understand how to write linear models with categorical variables mathematically.
 3. Understand the evaluation metrics used in model selection.
-4. Learn about the `step()` function for model selection.
+4. Learn about `ANOVA()` function for model selection.
 5. Learn about `drop1()` function for model selection.
-6. Learn about `ANOVA()` function for model selection.
+6. Learn about the `step()` function for model selection.
 7. Learn how to these concepts to real problems in ecology and environmental sciences involving data through worked examples.
 
 # Steps:
@@ -31,11 +31,12 @@
 3. [**Evaluation Metrics**](#eval)
   - [F-Statistic](#f)
   - [AIC](#AIC)
-4. [**Method I: Drop1**](#drop)
-  - [`log` transformation](#log)
-5. [**MethodII: Step**](#step)
+4. [**Method I: ANOVA**](#anova)
+  - [Recap of One-Way ANOVA](#one)
+  - [Two-Way ANOVA](#two)
+5. [**MethodII: Drop1**](#drop)
   - [Standardization](#Standardization)
-6. [**MethodIII: ANOVA**](#Anova)
+6. [**MethodIII: Step**](#step)
   - [Standardization](#Standardization)
 7. [**All Together](#together)
   - [Standardization](#Standardization)
@@ -50,7 +51,7 @@ Data exists in diverse forms, with varying structures, sizes, and complexities. 
 
 **Effective model selection** plays a critical role in building accurate and efficient models. Achieving this requires a strong understanding of key evaluation metrics, such as AIC (Akaike Information Criterion) and p-values, as well as familiarity with different refinement methods and their interpretations. Mastering model selection empowers researchers to fully leverage complex datasets and develop robust models that strike a balance between simplicity and predictive power.
 
-This tutorial focuses on performing **model selection** for linear models with categorical variables, using three common methods in **R**. We will also explore the mathematical formulation of these models and the evaluation metrics that guide the selection process. By working with a variety of datasets, the tutorial will demonstrate how model selection serves as a powerful tool for tackling real-world data challenges. Finally, the three methods will be integrated into a comprehensive framework, providing a practical approach to model refinement.
+This tutorial focuses on performing **model selection** for linear models with categorical variables, using 2 common methods: ANOVA and Stepwise model selection. This tutorial will cover 4 functions in **R** that perfrom these model selection. We will also explore the mathematical formulation of these models and the evaluation metrics that guide the selection process. By working with a variety of datasets, the tutorial will demonstrate how model selection serves as a powerful tool for tackling real-world data challenges. Finally, the three methods will be integrated into a comprehensive framework, providing a practical approach to model refinement.
 
 ---
 
@@ -585,7 +586,7 @@ In this section, explore the **F-statistic** and the **Akaike Information Criter
 
 ---
 
-## 3.1 F-Statistic
+## 3.1 F-Statistic and it's Corresponding p-valye
 {: #f}
 
 The **F-statistic** assesses whether a group of predictors in a model, or the overall model itself, significantly improves the fit compared to a simpler baseline model (e.g., one without those predictors). It is calculated as the ratio of explained variance to unexplained variance, standardized by their respective degrees of freedom. 
@@ -597,7 +598,6 @@ The **p-value** associated with the F-statistic, tell us the most in terms of mo
 When interpreting outputs like those from our  `summary()`, or the functions we will look at such as `anova()`, or `drop1()`, in R a significant F-statistic (with a low p-value) indicates that the model terms being tested add meaningful information, and their inclusion of "extra predictors" is justified.
 
 ---
-
 ## 3.2 AIC
 {: #AIC}
 
@@ -609,18 +609,45 @@ When we look at the output in the next section from our functions like `step()` 
 
 ---
 
-# 4. Model Selection
+## 3.3 Residual Sum of Squares(RSS) & The Sum of Sqaures (Sum of Sq)
+  
+When we look at the output of our model selection functions we will also see something called the **Residual Sum of Squares (RSS)** and **Sum of Squares**. These are fundamental concepts in evaluating how well a statistical model fits the data. They help quantify the variation in the dependent variable that is explained by the predictors versus the variation that remains unexplained. 
+ 
+## 3.3.1 Residual Sum of Squares (RSS)
+The RSS measures the amount of variation in the response (dependent) variable that is not explained by the model. It is calculated as the sum of the squared differences between the observed values ($y_i$) and the predicted values ($ \hat{y}_i$) of the dependent variable:  
 
-Now we have our evaluation metrics we can start having a look at our R functions and understanding their output!
+$RSS = \sum_{i=1}^n (y_i - \hat{y}_i)^2$ 
 
-## 4.2. Method I: ANOVA
-{: #ANOVA}
+A **smaller RSS** indicates that the model’s predictions are closer to the actual data, meaning the model fits the data well. Conversely, a larger RSS suggests a poor fit.
 
-Please make sure you have completed [this One-Way ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/) before you complete this section of the tutorial as it assumes you already know how to do this!
+# 3.3.2 Sum of Squares (Sum of Sq)
 
-In this tutorial we will look at both one-way ANOVA and **two-way ANOVA**. Before we get into Two-Way ANOVA lets have a quick recap of how we interpret the output of a One-Way ANOVA table.
+The Sum of Squares measures the total variation in the dependent variable and serves as the baseline against which the model is evaluated. In the functions we will be looking at in R, the **Sum of Squares** helps tells how much variation each predictor explains. By comparing models (e.g., with and without a given predictor), we assess whether the predictor significantly improves the fit.  It is calculates as follows: 
+  
+$\text{Sum of Sq} = \sum_{i=1}^n (y_i - \bar{y})^2$, where **$bar{y}$)** is mean of the observed values of the dependent variable.
 
-### 4.2.1 Recap of One-Way ANOVA
+A **large Sum of Sq** for a predictor suggests that the predictor is important for explaining the response variable and therefore should be kept in the model. Therfore, a small Sum of Sq value suggests that the model is not that important for explaining the response variable and should potentially be removed from the model.
+
+---
+
+Together with metrics like AIC and the F-statistic, these measures guide us in deciding which predictors to include or exclude in the model.
+
+So now that we have all of our evaluation metrics we can start having a look at our R functions and understanding their output!
+
+We will start by looking at ANOVA Model Selection
+
+---
+
+# 4. ANOVA Model Selection
+
+**ANOVA (Analysis of Variance) model selection** is a statistical method used to compare models by assessing whether the inclusion of additional predictors significantly improves the fit of a model. It is based on partitioning the variation in the dependent variable into components explained by the predictors and residual (unexplained) variation. ANOVA selection is used to test whether a simpler model (fewer predictors) is statistically different from a more complex model (additional predictors) by comparing their **Residual Sum of Squares (RSS)** value. The test provides an **F-statistic** and a corresponding **p-value** to determine if the extra predictors meaningfully contribute to explaining the response.  
+
+Throughout ANOVA Model Selection the evalaution metric we are intersted in is the **F-Statistic** and its **corresponding p-value**. Before we get into this section please make sure you have completed [this One-Way ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/)  as it assumes you already know how to do One-Way ANOVA.
+
+In this section we will look at both one-way ANOVA and **two-way ANOVA**. Before we get into Two-Way ANOVA lets have a quick recap of how we interpret the output of a One-Way ANOVA table.
+
+### 4.1 Recap of One-Way ANOVA
+{: #one}
 
 The best way to do this is to look at an example. Lets think back to our butterfat data and consider the model investigating the affect of breed and age on butterfat content in our cows, with no interaction term.
 
@@ -648,16 +675,17 @@ In the context of model selection, here's what each section of the ANOVA table t
 - *Interpretation*:
   - F value = 1.5976: A smaller F value suggests the effect of age on butterfat content is relatively weak compared to breed.
   - p-value = 0.2094: Since this p-value is greater than 0.05, we fail to reject the null hypothesis, meaning Age does not significantly affect butterfat content.
+  - Sum of Sq = 0.271: A smaller Sum of Sqaures values suggests that Age is not that important for explaining the response variable and supports the idea that it should potentially be removed from the mode,
 - *Degrees of Freedom (df)*:
-  - There is *1 df**for Age. This is because *Age* is a single factor with two levels (e.g., young and old), so the df is the number of levels minus one (2 - 1 = 1).
+  - There is *1 df**for Age. This is because *Age* is a factor with two levels (e.g., young and old), and the df is the number of levels minus one (2 - 1 = 1).
 
 **3. Breed:**
 - *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
 - *Interpretation*:
   - F value = 50.1150: A large F value indicates a large effect of breed on butterfat content relative to the unexplained variation (residuals).
   - p-value < 2e-16: The extremely small p-value means we reject the null hypothesis and conclude that Breed significantly affects butterfat content.
-- Degrees of Freedom (df): 
-  - There are 4 degrees of freedom for the **Breed** variable. Since the model has 5 levels of the **Breed** factor, the df is one less than the number of levels (5 - 1 = 4). 
+  - Sum of Sq = 34.321: This is quite a large value, indicating that Breed is important in explaining the response variable which supports the idea it should be kept into the model.
+- Degrees of Freedom (df): There are 4 degrees of freedom for the **Breed** variable. Since the model has 5 levels of the **Breed** factor, the df is one less than the number of levels (5 - 1 = 4). 
 
 Thus from this output we would conclude that Breed has a significant impact on butterfat content, while Age does not and as such we should consdier a model that does *not* include factor variable Age.
 
@@ -690,30 +718,35 @@ Starting from teh bottom up we can interpret the table as follows:
 
 **2. Breed:Age Interaction**:
    - *Null hypothesis ($H_0$)*: There is no interaction effect between Breed and Age on butterfat content, i.e,
-   - *Interpretation*: The small F-value (0.7421) and the large p-value ($0.5658 > 0.05$) indicate that the interaction between Breed and Age does not significantly improve the model. So we fail to reject the null hypothesis, suggesting that the interaction term is not necessary in the model.
+   - *Interpretation*: The small F-value (0.7421) and the large p-value ($0.5658 > 0.05$) indicate that the interaction between Breed and Age does not significantly improve the model. So we fail to reject the null hypothesis, suggesting that the interaction term is not necessary in the model. Furthermore, the small Sum of Sq value supports this conclusion.
    - *Degrees of Freedom (df)*: There are 4 degrees of freedom for the interaction term, which reflects the product of the levels of the two factors (Breed with 5 levels and Age with 2 levels), minus 1 for each factor (5 - 1 = 4).
 
 **3. Age**:
    - *Null hypothesis ($H_0$)*: Age does not affect butterfat content, i.e,
-   - *Interpretation**: The F-value (1.5801) is small, and the p-value (0.2120) is greater than 0.05, so we fail to reject the null hypothesis. This suggests that Age does not significantly affect butterfat content.
+   - *Interpretation**: The F-value (1.5801) is small, and the p-value (0.2120) is greater than 0.05, so we fail to reject the null hypothesis. This suggests that Age does not significantly affect butterfat content. Furthermore, the small Sum of Sq value supports this conclusion.
    - *Degrees of Freedom (df)*: Age has 1 degree of freedom since it is a single factor with two levels (2 - 1 = 1).
 
 **4. Breed**:
    - *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
-   - *Interpretation*: The large F-value (49.5651) and the extremely small p-value (<2e-16) suggest that Breed significantly affects butterfat content. We reject the null hypothesis.
+   - *Interpretation*: The large F-value (49.5651) and the extremely small p-value (<2e-16) suggest that Breed significantly affects butterfat content, therefore we reject the null hypothesis. Furthermore, the large Sum of Sq value supports this conclusion.
    - *Degrees of Freedom (df)*: There are 4 degrees of freedom for Breed because it has 5 levels (5 - 1 = 4).
 
 Based on this ANOVA table, we would conclude that Breed significantly affects butterfat content, while Age and the Breed:Age interaction do not. Therefore, a model excluding Age and the interaction term would be more appropriate fit for our data.
 
-### 4.2.2 Two-Way ANOVA
+Now that we have recaped One-Way ANOVA, we are ready to look at Two-Way ANOVA tables!
+
+---
+
+### 4.2 Two-Way ANOVA
+{: #two}
 
 Two-way ANOVA is a statistical method used for model selection to test a **full model** against a **sub model**. A full model contains **all** the terms in the model we want to test and the sub model contains **some** of the terms in our model. This basically tests if not including some variables improves our model.
 
 In the context of this tutorial we will use Two-Way ANOVA when we have a model with an *interaction term* and we want to see if this term is significant to our model. As such we are testing the null hypothesis, $H_0$, model without interaction term (sub-model) is better than model with interaction (full-model) against the alternative hypothesis, $H-1$, full model is better than submodel. If we fail to reject $H_0$, which we do when our p-value is less than 0.05, our full model is better and such we should keep our interaction term in the model. It then follows that if we reject $H_0$, which we do when our p-value is greater than 0.05, our sub model is better and such we should remove our interaction term in the model. 
 
-To do Two-Way Anova in R we use the `anova()` function and we call the following `anova(submodel, full model)`.
+To do Two-Way ANOVA in R we use the `anova()` function and we call it in the following way `anova(submodel, full model)`.
 
-So know we know what Two-Way Anova does and how to do it but how do we understand the output of ANOVA? The best way to explain this is to look at an example. Lets continue with our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
+So know we know what Two-Way ANOVA does and how to do it but how do we understand the output of Two-Way ANOVA table? The best way to explain this is to look at an example. Lets continue with our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
 
 ```r
 # full model:
@@ -768,4 +801,184 @@ In this example the p-value (0.5658) is much greater than 0.05, so we fail to re
 
 In conclusion, the simpler model (Model 1: `Butterfat ~ Breed + Age`) is sufficient, and including the interaction term does not add meaningful predictive power, so we **select** Model 1. This matches what we did above with One-Way ANOVA.
 
+---
 
+So now we know how we can use both One-Way ANOVA and Two-Way ANOVA for model selction and how we can understand their output for this purpose. But what instead of testing full and sub models we wanted to look at if one group is signifcant or not? 
+
+This is called step-wise selection and it is where the `drop1` and `step` functions come in!
+
+---
+# 5 Step-Wise Model Selection
+{: #stepwise}
+
+Stepwise model selection is a systematic approach to refine a statistical model by either adding or removing predictors based on a specific evaluation criterion. The goal is to strike a balance between a model that fits the data well and one that is not overly complex, thus the accuracy metric we focus on is AIC!
+
+There are three main approaches to stepwise selection:
+1. **Forward Selection:** Starts with no predictors and adds variables one at a time, choosing the one that provides the greatest improvement (e.g., lowest AIC) at each step.
+2. **Backward Elimination:** Starts with all potential predictors and removes variables one at a time, eliminating the one that worsens the model the least (or improves it the most).
+3. **Stepwise Selection (Combination):** Combines forward and backward methods, allowing variables to be added or removed at each step based on the evaluation metric.
+
+Everything shown in this tutorial can be used on all three types of stepwise selection.
+
+ **The Role of AIC in Stepwise Selection**
+
+The accuracy metric used in stepwise model selection is **Akaike Information Criterion (AIC)**. AIC is a widely used measure for comparing statistical models, and it is based on two key components:
+1. **Goodness of Fit:** How well the model explains the observed data.
+2. **Model Complexity:** A penalty for the number of predictors (to avoid overfitting).
+
+**The goal is to minimize the AIC**—a lower AIC indicates a better model. This reflects a model that explains the data well without being overly complex.
+
+To begin with lets have a look at the `drop1` function.
+
+---
+## 5.1 Drop 1
+{: #drop1}
+
+The `drop1` function in R is used during model selection to evaluate the impact of removing individual variables from a model. It one of the most commonly used function in stepwise model selection and it works by comparing the AIC values of models with and without each variable. We remeber from section 3 a **lower AIC** indicates a better model, as it suggests a better balance between fit and complexity and a **high Sum of Sq** indicates the predictor we are looking at significantly helps explain the response variable.
+
+**What `drop1` Does**  
+The `drop1` function evaluates what happens to the AIC if each variable in the model is removed one at a time. For each variable:
+   - It calculates the AIC of the model without that variable.
+   - It provides a table showing the AIC for all possible one-variable-removal models.
+
+**How to Interpret the Results**  
+   - If removing a variable reduces the AIC (i.e., leads to a lower AIC), it suggests that the model improves when that variable is dropped. This may happen if the variable does not contribute significantly to the model or introduces unnecessary complexity.
+   - If removing a variable increases the AIC, it indicates that the variable is important for the model, and dropping it would harm the balance between fit and complexity.
+
+Thus, we drop the variable that results in the lowest AIC, this may seem a bit counterintuitive as what we want is the lowest AIC model. However, the AIC value represnets the AIC of the model **without** this variable and if this AIC is lower than the current model’s AIC it means that dropping that variable improves the overall model. Thus, in stepwise regression, this variable is removed because it leads to the greatest improvement in model quality according to the AIC.
+
+Lets have a look at some examples of `drop1` and look at how we can interpret the output it gives us. 
+
+### Example With No Interaction Term
+
+Lets continue with our butterfat data and look at our model that looks at breed and age affecting butterfat content in our cows, with no interaction.
+
+```r
+no interaction model
+butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+```
+From above we know that this model can be written mathematically as:
+
+
+Now lets apply `drop1` function and see what happens!
+```r
+#apply drop1
+drop1(butterfat_lm)
+```
+We get the following output:
+
+![drop1(blm)](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/drop1(butterfat_lm).png)
+
+This `drop1` output evaluates the impact of removing each predictor (`Breed` and `Age`) one at a time on the residual sum of squares (RSS) and Akaike Information Criterion (AIC). 
+
+So what does each collumn mean?
+
+**1. Df:**  
+   Degrees of freedom associated with the predictor. For `Breed`, this is 4 because it has multiple levels (5 levels) and for `Age`, this is 1 (Age has 2 levels). The reason `Breed` had 4 df's instead of 5 and `Age` has 1 df instead of 2 is beacuse we took the first of level of each variable into the intercept of the model!
+
+**2. Sum of Sq:**  
+   The sum of squares explained by the predictor. This measures how much variation in the response `Butterfat` is explained by the predictor that would be lost if it were removed:
+   - `Breed`: Removing `Breed` would result in losing 34.321 units of explained variation in `Butterfat`.
+   - `Age`: Removing `Age` would result in losing 0.274 units of explained variation.
+
+**3. RSS (Residual Sum of Squares):**  
+   The RSS is the amount of variation in `Butterfat` that remains unexplained by the model. Lower RSS indicates a better-fitting model:
+   - `<none>`: The RSS for the current model (with both `Breed` and `Age`) is **16.094**.
+   - `Breed`: If `Breed` is removed, the RSS increases to **50.415**.
+   - `Age`: If `Age` is removed, the RSS increases slightly to **16.368**.
+
+**4. AIC:**  
+   The AIC evaluates the tradeoff between model fit and complexity. A lower AIC indicates a better model:
+   - `<none>`: The AIC of the full model is **-170.672**.
+   - `Breed`: Removing `Breed` increases the AIC to **-64.487**, which is much worse. This suggests that `Breed` is an important predictor.
+   - `Age`: Removing `Age` results in a slight reduction in AIC to **-170.987**, which is marginally better. This suggests that `Age` contributes very little to the model's performance.
+
+So what does all this mean?
+
+**1. Removing `Breed` is a bad idea.**  
+The AIC becomes much worse when `Breed` is removed, indicating that it is a critical predictor for explaining `Butterfat`. The high sum of squares (34.321) associated with `Breed` also supports this.
+
+**2. Removing `Age` is potentially acceptable.**  
+The AIC improves slightly when `Age` is removed (from -170.672 to -170.987). This suggests that `Age` has minimal impact on the model and could be considered for removal to simplify the model.
+
+**3. Next Step:**  
+Based on this output, the `drop1` function suggests that you might proceed by removing `Age` to potentially improve the model's AIC.
+
+### Example With an Interaction Term
+
+What happens if we have an interacton term? Well the `drop1` function only investiagtes whether our interaction term should be kept. Lets look at our butterfat model that looks at breed and age affecting butterfat content in our cows with an interaction term.
+
+```r
+no interaction model
+butterfat_lm_interact <- lm(Butterfat ~ Breed*Age, butterfat_data)
+```
+From above we know that this model can be written mathematically as:
+
+
+Now lets apply `drop1` function and see what happens!
+```r
+#apply drop1
+drop1(butterfat_lm_interact)
+```
+We get the following output:
+
+![drop1(blm)](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/drop1(butterfat_lm_interact).png)
+
+The output from the `drop1` function helps us assess whether the interaction term significantly contributes to explaining the variability in `Butterfat`.
+
+So what does each collumn mean?
+
+**1. Df:**  
+The degrees of freedom associated with the interaction term.  
+- `Breed:Age`: The interaction between `Breed` (5 levels) and `Age` (2 levels) has **4 degrees of freedom**. This is because 
+
+**2. Sum of Sq:**  
+This column indicates how much variation in the response variable `Butterfat` is explained by the interaction term.  
+- Removing the interaction term (`Breed:Age`) would result in losing **0.514 units of explained variation**. This is a relatively small contribution to the variation in `Butterfat`, suggesting that the interaction term has limited importance.
+
+**3. RSS (Residual Sum of Squares):**  
+The RSS measures the variation in `Butterfat` that is not explained by the model.  
+- `<none>`: The RSS for the full model (including `Breed`, `Age`, and `Breed:Age`) is **15.580**.  
+- `Breed:Age`: If the interaction term is removed, the RSS increases to **16.094**, meaning slightly more variation is left unexplained. The increase is small, reflecting the minimal impact of the interaction term.
+
+**4. AIC (Akaike Information Criterion):**  
+The AIC evaluates the tradeoff between model fit and complexity. Lower AIC values indicate better models:  
+- `<none>`: The AIC of the full model is **-165.92**.  
+- `Breed:Age`: Removing the interaction term decreases the AIC to **-170.67**, which is better. This suggests that the simpler model (without the interaction term) is preferred based on AIC.
+
+So what does this mean?
+
+**1. Removing the interaction term is likely a good idea.**  
+The AIC improves significantly (from **-165.92** to **-170.67**) when the interaction term is removed, indicating that the simpler model (without the interaction term) balances fit and complexity better. The small **Sum of Sq** (0.514) further supports that the interaction does not meaningfully contribute to explaining `Butterfat`.
+
+**2. The main effects of `Breed` and `Age` remain critical.**  
+While the interaction is not important, this does not affect the significance of the main effects (`Breed` and `Age`), which are likely still contributing to explaining the variation in `Butterfat`.
+
+**3. Next Steps: Simplify the Model**  
+Based on this output, the `drop1` function suggests removing the interaction term (`Breed:Age`) to improve the model. This will result in a simpler model:
+
+---
+
+Tada now we know that we can use `drop1` function in R and understand its ouput for both interaction and no interaction models for model selection! 
+
+But what if we have a big model with lots of different variables like our ... example using `drop1` over and over would be very tedious and not very efficient. This is where the `step` function comes in!
+
+
+---
+## 5.2 Step
+
+While `drop1` focuses on assessing variable removal, the `step` function automates the stepwise process.
+
+**How the `step` Function Works**
+
+The `step` function in R automates stepwise model selection by evaluating the AIC for all possible additions and/or deletions of predictors at each step. Here's how it works:
+1. The function starts with an initial model (either the full model or an empty model).
+2. It iteratively evaluates potential models:
+   - In **forward selection**, it tries adding each variable and calculates the AIC.
+   - In **backward elimination**, it tries removing each variable and calculates the AIC.
+   - In **stepwise selection**, it does both and chooses the best action (add/remove).
+3. The process stops when no action (adding or removing a variable) improves the AIC.
+
+The final model is the one with the lowest AIC achieved during the process.
+
+---
