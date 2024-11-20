@@ -816,17 +816,15 @@ Stepwise model selection is a systematic approach to refine a statistical model 
 There are three main approaches to stepwise selection:
 1. **Forward Selection:** Starts with no predictors and adds variables one at a time, choosing the one that provides the greatest improvement (e.g., lowest AIC) at each step.
 2. **Backward Elimination:** Starts with all potential predictors and removes variables one at a time, eliminating the one that worsens the model the least (or improves it the most).
-3. **Stepwise Selection (Combination):** Combines forward and backward methods, allowing variables to be added or removed at each step based on the evaluation metric.
+3. **Combination Selection:** Combines forward and backward methods, allowing variables to be added or removed at each step based on the evaluation metric.
 
 Everything shown in this tutorial can be used on all three types of stepwise selection.
 
- **The Role of AIC in Stepwise Selection**
-
-The accuracy metric used in stepwise model selection is **Akaike Information Criterion (AIC)**. AIC is a widely used measure for comparing statistical models, and it is based on two key components:
+The accuracy metric used in stepwise model selection is **AIC**. AIC is a widely used measure for comparing statistical models, and it is based on two key components:
 1. **Goodness of Fit:** How well the model explains the observed data.
 2. **Model Complexity:** A penalty for the number of predictors (to avoid overfitting).
 
-**The goal is to minimize the AIC**—a lower AIC indicates a better model. This reflects a model that explains the data well without being overly complex.
+**The goal is to minimise the AIC**—a lower AIC indicates a better model. This reflects a model that explains the data well without being overly complex.
 
 To begin with lets have a look at the `drop1` function.
 
@@ -961,13 +959,13 @@ Based on this output, the `drop1` function suggests removing the interaction ter
 
 Tada now we know that we can use `drop1` function in R and understand its ouput for both interaction and no interaction models for model selection! 
 
-But what if we have a big model with lots of different variables like our ... example using `drop1` over and over would be very tedious and not very efficient. This is where the `step` function comes in!
+But what if we have a big model with lots of different variables, like our miltary coups and politics in sub-Saharan Africa data example, using `drop1` over and over would be very tedious and not very efficient. This is where the `step` function comes in!
 
 
 ---
 ## 5.2 Step
 
-While `drop1` focuses on assessing variable removal, the `step` function automates the stepwise process.
+While `drop1` focuses on assessing variable removal, the `step` function automates the stepwise process, iteratively adding or removing variables to optimise the model based on a chosen metric, typically AIC. 
 
 **How the `step` Function Works**
 
@@ -979,6 +977,177 @@ The `step` function in R automates stepwise model selection by evaluating the AI
    - In **stepwise selection**, it does both and chooses the best action (add/remove).
 3. The process stops when no action (adding or removing a variable) improves the AIC.
 
-The final model is the one with the lowest AIC achieved during the process.
+The final model is the one with the lowest AIC achieved during the process, and is the model that should be used.
+
+### 5.2 Step  
+{: #step}  
+
+The `step` function in R automates the process of stepwise model selection, iteratively adding or removing variables to optimize the model based on a chosen metric, typically the **Akaike Information Criterion (AIC)**. This method evaluates the tradeoff between model fit and complexity, aiming to identify the model with the **lowest AIC**.  
+
+**What `step` Does**  
+The `step` function systematically examines models by either:  
+1. *Backward elimination:** Starting with a full model, it removes variables one by one, calculating the AIC for each reduced model.  
+2. *Forward selection:** Starting with an intercept-only model, it adds variables one by one, calculating the AIC for each expanded model. 3. *Comibation selection:** A combination of both approaches, iteratively adding and removing variables to find the optimal model.  
+
+
+**How to Interpret the Results**  
+
+For each step in the process, the `step` function provides a summary table that includes the follwoing:  
+### Summary of How to Interpret the `step()` Function Output in General:
+
+*1. Starting Model**: 
+   - The output begins with the initial model, which includes all predictors (in backward elimination) or none (in forward selection). It also shows the AIC of this model, which serves as a baseline for comparison.
+   
+*2. Stepwise Selection Process**: 
+   - The algorithm iterates through multiple steps, evaluating models with different combinations of predictors. It adds or removes variables and computes the AIC at each step, selecting the model with the **lowest AIC**.
+   - For iteration the `step` function creates a summary table which shows the details of each model, the models are listed from **lowest to highest** AIC:
+       - The **<none> Row** shows the current model’s performance (AIC, RSS, etc.) before any changes (i.e., before any predictor is removed), it serves as a reference point for comparing the impact of removing predictors and helps assess how each variable removal affects the model.       
+       - The **Df** (Degrees of Freedom), **Sum of Squares (Sum of Sq)**, **Residual Sum of Squares (RSS)**, and **AIC** columns help track how each predictor impacts the model’s performance:
+
+| **Column**                     | **What It Represents**                                                                                                                                   | **Why It's Important**                                                                                                                                                           | **How Each Column Helps Track Impact**                                                                                                                                               |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Df (Degrees of Freedom)**     | The number of parameters (or pieces of information) associated with each predictor minus 1.                                                                    | Indicates the complexity of the model. A predictor with higher Df typically contributes more parameters to the model. The removal of a predictor reduces the model's Df.           | Shows how the number of parameters changes when a predictor is added or removed.                                                                                                       |
+| **Sum of Squares (Sum of Sq)**  | The amount of variation explained by each predictor in the model.                                                                                     | Shows the contribution of each predictor to explaining the variance in the dependent variable. Larger values indicate greater contribution.                                       | Indicates how much variation is explained by a predictor. A larger value means the predictor contributes more to explaining the response variable.                                  |
+| **Residual Sum of Squares (RSS)** | The amount of unexplained variance (errors) after fitting the model.                                                                                 | A lower RSS indicates a better-fitting model because the model explains more of the variance in the data. The goal is to minimize RSS.                                           | Reveals how much unexplained variance remains after fitting the model. A lower RSS suggests better model fit.                                                                         |
+| **Akaike Information Criterion (AIC)** | A measure used for model selection that balances model fit and complexity (number of parameters).                                                   | A lower AIC indicates a better model that balances fit and complexity. The `step()` function selects models based on the lowest AIC.                                             | The primary measure for model selection. The goal is to minimize AIC by selecting the model with the best balance between complexity and fit.                                        |
+
+   
+3. **Final Model**:
+   - After the iterations, the final model is displayed, which has the **lowest AIC** and is considered the best model based on the AIC criterion.
+   - After the function makes a selection, the coefficients of the final model show the impact of each predictor on the outcome variable.
+
+**Key Points for Interpretation**  
+- *Lower AIC is better:** The goal is to minimize the AIC by selecting variables that improve the balance between fit and complexity.
+- At each iteration we only remove **one** variable to maintain control over model complexity, accurately assess each predictor’s impact, and prevent overfitting. This iterative approach ensures that the model is gradually simplified while preserving its predictive power. By removing variables one by one, the process allows for careful evaluation of how each predictor affects the model's performance (AIC and fit), avoids drastic changes that could harm the model, and ensures computational efficiency.
+- The process stops when *no variable addition or removal reduces the AIC further.  
+- *Removed variables:** Variables whose exclusion lowers the AIC were likely not contributing significantly to the model.  
+- *Added variables:** Variables whose inclusion lowers the AIC improve the model by explaining additional variability in the response.  
+
+
+ **Why Use `step`?**  
+The `step` function is particularly useful when dealing with a large number of predictors, as it automates the model selection process. It ensures a systematic evaluation of the impact of each variable, saving time and effort compared to manually using `drop1`. However, caution is needed to avoid overfitting or underfitting, as the process is driven solely by AIC without considering domain knowledge or practical significance.  
+ 
+Lets have a look at some examples with and without interaction terms! Lets think back to our `africa` data about the miltary coups and politics in sub-Saharan Africa. In both examples we will do **backward selection**
+ 
+### Example Without an Interaction Term
+
+Lets begin with defining our linear model: 
+
+```r
+#define linear model
+africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size
++ numelec + numregim, africa_data)
+#check summary
+summary(africa_lm)
+```
+From the summary and section 1 we know that this model can be written mathematically as:
+
+
+This is a huge model with lots of predictors. How can we be sure that all these predictors are necessary and we are not overfitting? The `step` fucntion!
+
+Lets apply the `step` function and see what happens:
+
+```r
+#apply step()
+step(africa_lm)
+```
+
+We get the following output:
+
+![step(africa_lm_1/3)](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/step_output_africa_1%3A3.png)
+![step(africa_lm_2/3)](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/step_output_africa_2.3.png)
+![step(africa_lm_3/3)](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/step_output_africa_3%3A3.png)
+
+
+Try not be put off by how large an output this is as it is pretty straightforward to interpret!
+The output of the `step()` function is a result of **stepwise model selection** using AIC. The goal is to iteratively remove predictors from the model (or add them, if necessary) to minimise the AIC, which balances model fit and complexity. Here's a breakdown of each part of the output:
+
+### Step 1: Initial Model:
+
+Before we see our summary table we have the following output:
+```r
+Start:  AIC=31.0
+miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size + numelec + numregim
+```
+
+ This tell us that our starting model with all the predictors: `oligarchy`, `as.factor(pollib)`, `parties`, `popn`, `size`, `numele`, and `numregim`, has an AIC value of $31.01$.
+
+Our summary output table:
+```r
+                    Df Sum of Sq    RSS    AIC
+- numregim           1    0.5599 57.809 29.418
+- size               1    0.9849 58.234 29.726
+- numelec            1    1.0103 58.259 29.744
+- popn               1    1.7987 59.048 30.308
+<none>                           57.249 31.009
+- parties            1    4.0115 61.261 31.854
+- as.factor(pollib)  2    7.3485 64.598 32.081
+- oligarchy          1   24.3257 81.575 43.882
+```
+tells us what each model with the specified variable does to our models Sum of Sqaures, RSS and AIC. Refer to the table above for a more in depth explanation of each collumn.
+Based on the output we can see that:
+- Removing `numregim` decreases AIC from **31.01** to **29.42**, which suggests that removing `numregim` improves the model.
+- Removing `oligarchy` leads to a much worse AIC of **43.88**, indicating that it’s an important predictor.
+
+### Step 2: New Model After Removing `numregim`
+
+Before we see our summary table we have the following output:
+```r
+Step:  AIC=29.42
+miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size + numelec
+```
+This tells that the updated model after removing `numregim` has an AIC of **29.42**, and what variables it contains.
+
+We get the following summary output.
+```r
+                    Df Sum of Sq    RSS    AIC
+- numelec            1    0.5391 58.348 27.808
+- size               1    0.9514 58.760 28.103
+<none>                           57.809 29.418
+- popn               1    2.9556 60.765 29.512
+- as.factor(pollib)  2    7.0078 64.817 30.224
+- parties            1    4.2281 62.037 30.383
+- oligarchy          1   30.9364 88.745 45.420
+```
+Again, the `step()` function evaluates the impact of removing each predictor:
+- **Removing `numelec`** decreases AIC to **27.81**, suggesting that `numelec` is important.
+- **Removing `oligarchy`** significantly worsens the model with an AIC of **45.42**.
+
+This process repeats untill we get to our final model, we know we have our final model when `<none>` is at the top of our summary table output, i.e the model with no change has the lowest AIC value.
+
+In our example this looks like:
+```r
+Step:  AIC=26.1
+miltcoup ~ oligarchy + as.factor(pollib) + parties
+
+                    Df Sum of Sq    RSS    AIC
+<none>                           61.614 26.095
+- parties            1     4.848 66.463 27.277
+- as.factor(pollib)  2     9.415 71.030 28.068
+- oligarchy          1    37.888 99.502 44.225
+```
+This tells us that no variables should be removed and we have reached our final model!
+
+The `step`  function then gives us a `Coefficients` table:
+```r
+Call:
+lm(formula = miltcoup ~ oligarchy + as.factor(pollib) + parties, 
+    data = africa_data)
+
+Coefficients:
+       (Intercept)           oligarchy  as.factor(pollib)1  as.factor(pollib)2  
+           1.53667             0.16884            -0.66190            -1.60340  
+           parties  
+           0.03002  
+```
+This `Coefficients` table shows the estimated effect of each predictor on the dependent variable `miltcoup`.
+
+---
+
+What happens if we have an interaction term? Nothing! The `step` function treats the interaction term as a variable in itself
+
+### Example With an Interaction Term
+
+Lets have a look at an example think back to 
 
 ---
