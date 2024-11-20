@@ -121,10 +121,13 @@ anova(butterfat_lm, butterfat_interact_lm)
 
 ##Drop1
 
-#no interaction
+#no interaction model
 butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
+#apply drop1
 drop1(butterfat_lm)
 
 
 #interaction
 butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
+#apply drop1
+drop1(butterfat_interact_lm)
