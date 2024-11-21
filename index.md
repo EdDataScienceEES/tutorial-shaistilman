@@ -13,12 +13,10 @@
 # Tutorial aims:
 
 1. Understand why we do model selection.
-3. Understand the evaluation metrics used in model selection.
-4. Understand how to intepret the output of  `summary()` function, in terms of model selection.
-5. Learn about `ANOVA()` function for model selection and how to intepret the output of it.
-6. Learn about `drop1()` function for model selection and how to intepret the output of it.
-7. Learn about the `step()` function for model selection and how to intepret the output of it.
-8. Learn how to these concepts to real problems in ecology and environmental sciences involving data through worked examples.
+2. Understand the evaluation metrics used in stepwise model selection.
+3. Learn about `drop1()` function for model selection and how to intepret the output of it.
+4. Learn about the `step()` function for model selection and how to intepret the output of it.
+5. Learn how to these concepts to real problems in ecology and environmental sciences involving data through worked examples.
 
 # Steps:
 
@@ -32,18 +30,11 @@
   - [F-Statistic](#f)
   - [AIC](#AIC)
   - [RSS and Sum of Sq](#AIC)
-3. [**Summary Function**](#sum)
-  - [Linear Models Without Interaction Terms](#simple)
-  - [Linear Models With Interaction Terms](#interact)
-4. [**ANOVA Model Selection**](#anova)
-  - [Recap of One-Way ANOVA](#one)
-  - [Two-Way ANOVA](#two)
-5. [**Stepwise Model Selection**](#step)
+3. [**Stepwise Model Selection**](#step)
   - [Drop1](#one)
   - [Step](#Step)
-6. [**All Together](#together)
-7. [**Summary**](#Summary)
-8. [**Challenge**](#Challenge)
+4. [**Summary**](#Summary)
+5. [**Challenge**](#Challenge)
 
 ---
 # 1. Introduction
@@ -143,198 +134,9 @@ A **large Sum of Sq** for a predictor suggests that the predictor is important f
 Together with metrics like AIC and the F-statistic, these measures guide us in deciding which predictors to include or exclude in the model.
 So now that we have all of our evaluation metrics we can start having a look at our R functions and understanding their output!
 
----
-# 3. Interpreting Summary Output
-{: #eval}
-
-
-
 
 ---
-
-Now that we understand how to interpret our models summary output we are now able to look at Model Selection. We will start by looking at ANOVA Model Selection
-
----
-
-# 4. ANOVA Model Selection
-
-**ANOVA (Analysis of Variance) model selection** is a statistical method used to compare models by assessing whether the inclusion of additional predictors significantly improves the fit of a model. It is based on partitioning the variation in the dependent variable into components explained by the predictors and residual (unexplained) variation. ANOVA selection is used to test whether a simpler model (fewer predictors) is statistically different from a more complex model (additional predictors) by comparing their **Residual Sum of Squares (RSS)** value. The test provides an **F-statistic** and a corresponding **p-value** to determine if the extra predictors meaningfully contribute to explaining the response.  
-
-Throughout ANOVA Model Selection the evalaution metric we are intersted in is the **F-Statistic** and its **corresponding p-value**. Before we get into this section please make sure you have completed [this One-Way ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/)  as it assumes you already know how to do One-Way ANOVA.
-
-In this section we will look at both one-way ANOVA and **two-way ANOVA**. Before we get into Two-Way ANOVA lets have a quick recap of how we interpret the output of a One-Way ANOVA table.
-
-### 4.1 Recap of One-Way ANOVA
-{: #one}
-
-The best way to do this is to look at an example. Lets think back to our butterfat data and consider the model investigating the affect of breed and age on butterfat content in our cows, with no interaction term.
-
-We begin by constructing our model and having a look at our summary output.
-
-```r
-butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
-summary(butterfat_lm)
-```
-
-...
-
-
-```r
-anova(butterfat_lm)
-```
-
-Remeber that we read the One-Way ANOVA from the **bottom up**! When we apply the `anova()` function the model we get the following output:
-
-![One-Way](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_one_ANOVA.png)
-
-We start with the bottom of the table:
-In the context of model selection, here's what each section of the ANOVA table tells us, especially regarding degrees of freedom (df) and their interpretation:
-
-**1. Residuals:**
-- *Interpretation*:
-  - The residuals represent the unexplained variation after accounting for the effects of Breed and Age. 
-  - The df for residuals is 94, which represents the remaining degrees of freedom after accounting for the effects of the variables in the model. In total, there were 100 data points (n = 100), and since 6 parameters are estimated in the model (5 for Breed + 1 for Age), the residual degrees of freedom are 100 - 6 = 94.
-  - In the context of this tutorial, the residual row does not tell us much in terms of how we should select our model.
-
-**2. Age:**
-- Null hypothesis ($H_0): Age does not affect butterfat content, i.e 
-- *Interpretation*:
-  - F value = 1.5976: A smaller F value suggests the effect of age on butterfat content is relatively weak compared to breed.
-  - p-value = 0.2094: Since this p-value is greater than 0.05, we fail to reject the null hypothesis, meaning Age does not significantly affect butterfat content.
-  - Sum of Sq = 0.271: A smaller Sum of Sqaures values suggests that Age is not that important for explaining the response variable and supports the idea that it should potentially be removed from the mode,
-- *Degrees of Freedom (df)*:
-  - There is *1 df**for Age. This is because *Age* is a factor with two levels (e.g., young and old), and the df is the number of levels minus one (2 - 1 = 1).
-
-**3. Breed:**
-- *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
-- *Interpretation*:
-  - F value = 50.1150: A large F value indicates a large effect of breed on butterfat content relative to the unexplained variation (residuals).
-  - p-value < 2e-16: The extremely small p-value means we reject the null hypothesis and conclude that Breed significantly affects butterfat content.
-  - Sum of Sq = 34.321: This is quite a large value, indicating that Breed is important in explaining the response variable which supports the idea it should be kept into the model.
-- Degrees of Freedom (df): There are 4 degrees of freedom for the **Breed** variable. Since the model has 5 levels of the **Breed** factor, the df is one less than the number of levels (5 - 1 = 4). 
-
-Thus from this output we would conclude that Breed has a significant impact on butterfat content, while Age does not and as such we should consdier a model that does *not* include factor variable Age.
-
-What if we have an interaction term? Nothing!
-
-We treat the ineraction term has a variable and test it as we tested above. For example if we consider the model above with an interaction term, i.e:
-
-```r
-#construct model
-butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
-#look at summary
-summary(butterfat_lm)
-```
-From the summary 
-
-So if we now applied `anova()`:
-
-```r
-#apply ANOVA
-anova(butterfat_interact_lm)
-```
-Which gives us the following output:
-
-![Int_Anova](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_one_interact_ANOVA.png)
-
-Starting from teh bottom up we can interpret the table as follows:
-
-**1. Residuals**:
-   - The residuals represent unexplained variation in the data. With 90 degrees of freedom (100 data points - 6 parameters estimated), they reflect the variance not explained by the model.
-
-**2. Breed:Age Interaction**:
-   - *Null hypothesis ($H_0$)*: There is no interaction effect between Breed and Age on butterfat content, i.e,
-   - *Interpretation*: The small F-value (0.7421) and the large p-value ($0.5658 > 0.05$) indicate that the interaction between Breed and Age does not significantly improve the model. So we fail to reject the null hypothesis, suggesting that the interaction term is not necessary in the model. Furthermore, the small Sum of Sq value supports this conclusion.
-   - *Degrees of Freedom (df)*: There are 4 degrees of freedom for the interaction term, which reflects the product of the levels of the two factors (Breed with 5 levels and Age with 2 levels), minus 1 for each factor (5 - 1 = 4).
-
-**3. Age**:
-   - *Null hypothesis ($H_0$)*: Age does not affect butterfat content, i.e,
-   - *Interpretation**: The F-value (1.5801) is small, and the p-value (0.2120) is greater than 0.05, so we fail to reject the null hypothesis. This suggests that Age does not significantly affect butterfat content. Furthermore, the small Sum of Sq value supports this conclusion.
-   - *Degrees of Freedom (df)*: Age has 1 degree of freedom since it is a single factor with two levels (2 - 1 = 1).
-
-**4. Breed**:
-   - *Null hypothesis ($H_0$)*: Breed does not affect butterfat content, i.e
-   - *Interpretation*: The large F-value (49.5651) and the extremely small p-value (<2e-16) suggest that Breed significantly affects butterfat content, therefore we reject the null hypothesis. Furthermore, the large Sum of Sq value supports this conclusion.
-   - *Degrees of Freedom (df)*: There are 4 degrees of freedom for Breed because it has 5 levels (5 - 1 = 4).
-
-Based on this ANOVA table, we would conclude that Breed significantly affects butterfat content, while Age and the Breed:Age interaction do not. Therefore, a model excluding Age and the interaction term would be more appropriate fit for our data.
-
-Now that we have recaped One-Way ANOVA, we are ready to look at Two-Way ANOVA tables!
-
----
-
-### 4.2 Two-Way ANOVA
-{: #two}
-
-Two-way ANOVA is a statistical method used for model selection to test a **full model** against a **sub model**. A full model contains **all** the terms in the model we want to test and the sub model contains **some** of the terms in our model. This basically tests if not including some variables improves our model.
-
-In the context of this tutorial we will use Two-Way ANOVA when we have a model with an *interaction term* and we want to see if this term is significant to our model. As such we are testing the null hypothesis, $H_0$, model without interaction term (sub-model) is better than model with interaction (full-model) against the alternative hypothesis, $H-1$, full model is better than submodel. If we fail to reject $H_0$, which we do when our p-value is less than 0.05, our full model is better and such we should keep our interaction term in the model. It then follows that if we reject $H_0$, which we do when our p-value is greater than 0.05, our sub model is better and such we should remove our interaction term in the model. 
-
-To do Two-Way ANOVA in R we use the `anova()` function and we call it in the following way `anova(submodel, full model)`.
-
-So know we know what Two-Way ANOVA does and how to do it but how do we understand the output of Two-Way ANOVA table? The best way to explain this is to look at an example. Lets continue with our butterfat data and make two models that look at how breed and age affect butterfat content in our cows.
-
-```r
-# full model:
-butterfat_interact_lm <- lm(Butterfat ~ Breed*Age, butterfat_data)
-
-# sub model:
-butterfat_lm <- lm(Butterfat ~ Breed + Age, butterfat_data)
-```
-These models are both looking at how breed and age affect butterfat content but the first model (butterfat_interact_lm) assumes that there is an interaction effect between breed and age. This means it considers the possibility that the effect of age on butterfat content depends on the breed, or that the effect of breed on butterfat content depends on age. In other words, the second model (butterfat_lm) assumes that breed and age affect butterfat content independently, with no interaction between the two factors.
-
-From the previous section we have seen that can write these models mathematically by looking each of these models summary's respectively.
-
-We get that:
-
-Full Model: 
-
-Sub Model:
-
-
-It is clear that the full model has *more terms* hence, the name full model. So when we do apply the `anova()` function to these models we will be testing the following:
-
-$H_0: =0$, i.e sub model is a better fit for our data vs.
-$H_1: \neq 0$ i.e full model is a better fit for our data.
-
-
-So now we know what we are testing, lets apply the `anova()` function!
-```r
-#ANOVA
-anova(butterfat_lm, butterfat_interact_lm)
-```
-This gives us the following output:
-
-![Output](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/butterfat_ANOVA.png)
-
-
-So what does this mean?
-
-| **Column**       | **Explanation**                                                                                          |
-|-------------------|----------------------------------------------------------------------------------------------------------|
-| **Res.Df**        | Residual Degrees of Freedom: The number of observations (100) minus the number of parameters in the model. Model 1 has 94 (6 paramaters), and Model 2 has 90 (10 paramaters, 4 more than model 1 due to adding the interaction term). |
-| **RSS**           | Residual Sum of Squares: Measures the total variation in the dependent variable (Butterfat) unexplained by the model. Model 1 has 16.094, and Model 2 has a slightly smaller value of 15.580. |
-| **Df**            | Difference in degrees of freedom: The reduction in degrees of freedom between the models, which is 4 (from adding interaction terms). |
-| **Sum of Sq**     | The additional variation explained by the interaction term: 0.51387. |
-| **F**             | F-statistic: Tests whether the additional variation explained by the interaction term is significant relative to the unexplained variation (RSS). Here, \( F = 0.7421 \). |
-| **Pr(>F)**        | p-value: The probability of observing an F-statistic as large or larger if the null hypothesis is true. A large p-value (0.5658) indicates no significant improvement with the interaction term. |
-
-**So how can we interpret this?**
-
-The most important part of the anova table is the `Pr(>F)` collumn, as it tells us the p-value of our hypothesis test and whether we should reject the **null hypothesis** that the interaction term does not significantly improve the model (i.e., `Breed` and `Age` affect `Butterfat` independently).
-
-In this example the p-value (0.5658) is much greater than 0.05, so we fail to reject the null hypothesis. This means that adding the interaction term does not significantly improve the model's ability to explain variations in `Butterfat`. 
-
-In conclusion, the simpler model (Model 1: `Butterfat ~ Breed + Age`) is sufficient, and including the interaction term does not add meaningful predictive power, so we **select** Model 1. This matches what we did above with One-Way ANOVA.
-
----
-
-So now we know how we can use both One-Way ANOVA and Two-Way ANOVA for model selction and how we can understand their output for this purpose. But what instead of testing full and sub models we wanted to look at if one group is signifcant or not? 
-
-This is called step-wise selection and it is where the `drop1` and `step` functions come in!
-
----
-# 5 Step-Wise Model Selection
+# 3 Step-Wise Model Selection
 {: #stepwise}
 
 Stepwise model selection is a systematic approach to refine a statistical model by either adding or removing predictors based on a specific evaluation criterion. The goal is to strike a balance between a model that fits the data well and one that is not overly complex, thus the accuracy metric we focus on is AIC!
@@ -355,7 +157,7 @@ The accuracy metric used in stepwise model selection is **AIC**. AIC is a widely
 To begin with lets have a look at the `drop1` function.
 
 ---
-## 5.1 Drop 1
+## 3.1 Drop 1
 {: #drop1}
 
 The `drop1` function in R is used during model selection to evaluate the impact of removing individual variables from a model. It one of the most commonly used function in stepwise model selection and it works by comparing the AIC values of models with and without each variable. We remeber from section 3 a **lower AIC** indicates a better model, as it suggests a better balance between fit and complexity and a **high Sum of Sq** indicates the predictor we are looking at significantly helps explain the response variable.
@@ -489,7 +291,7 @@ But what if we have a big model with lots of different variables, like our milta
 
 
 ---
-## 5.2 Step
+## 3.2 Step
 
 While `drop1` focuses on assessing variable removal, the `step` function automates the stepwise process, iteratively adding or removing variables to optimise the model based on a chosen metric, typically AIC. 
 
@@ -744,23 +546,9 @@ as.factor(pollib)2                popn   oligarchy:parties
 This table shows the estimated effect of each predictor on the dependent variable `miltcoup`, with the interaction term included in the final model.
  
 ---
-# 6. Bringing It All Together
+# 4. Limitation of AIC Model Selection
 
-Now that we've covered a range of individual methods for model selection—evaluation metrics like **F-statistics**, **AIC**, **RSS**, and **Sum of Squares**, as well as **ANOVA** and **stepwise selection**—the next logical step is to understand how to combine these techniques to make more robust and informed decisions when selecting the best model for our data.
 
-Why do we use all of these methods together?
-
-Each of these methods provides a unique perspective on the model, and by considering them in combination, we get a fuller understanding of how well the model fits, how much complexity it introduces, and whether it's the most appropriate choice for the data at hand:
-
-1. **Evaluation Metrics** (F-statistics, AIC, RSS, Sum of Squares) give us quantitative measures to compare the performance of different models. AIC, for example, balances model fit and complexity, while RSS focuses on the residuals and how well the model explains the variance in the data. F-statistics and p-values allow us to test the significance of predictors in our models.
-
-2. **ANOVA** helps us compare models with different factors or interaction terms. One-way ANOVA can be useful when testing the impact of one categorical predictor, while two-way ANOVA allows us to evaluate the interaction between two categorical predictors. These methods can reveal important insights into how predictors work together to explain the variability in the response.
-
-3. **Stepwise Selection** (using functions like **step()** and **drop1()**) provides a method for iteratively adding or removing predictors from the model based on criteria such as AIC. It helps refine the model by identifying the most influential predictors, minimizing overfitting and underfitting. Stepwise selection offers a data-driven approach to model simplification.
-
-By combining all of these methods, we aim to strike a balance between model complexity and accuracy. For example, we might use **AIC** for model comparison while considering **ANOVA** to ensure the right interaction terms are included. We then might apply **stepwise selection** to iteratively refine the model by removing unnecessary predictors. 
-
-In practice, we utilise these methods at different times and sometimes together because no single technique gives a complete picture. By leveraging multiple approaches, we can make more informed decisions, ensure model robustness, and avoid pitfalls like overfitting or underfitting.
 
 ## Example
 
@@ -859,7 +647,7 @@ This output shows that removing the interaction terms from the full model result
 
 In summary accoridng ot all of our methods our final model should be 
 
-# 8. Summary 
+# 4. Summary 
 
 
 
@@ -869,3 +657,7 @@ These methods can be used together or separately depending on the stage of model
 Stepwise selection might be used first to identify a good baseline model.
 Drop1 and 1-way ANOVA can then be applied to further refine the model.
 2-way ANOVA provides a final check on whether removing interaction terms leads to a significant loss in model fit.
+
+
+
+
