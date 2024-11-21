@@ -152,3 +152,48 @@ africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn
 
 #apply step()
 step(africa_interact_lm)
+
+
+#All Together ----
+# Load required packages
+library(palmerpenguins)
+library(dplyr)
+
+# Load and clean the penguins dataset
+data("penguins")
+penguins_clean <- penguins %>%
+  filter(complete.cases(.))  # Remove rows with missing values
+
+# Save the cleaned data to a CSV file in the data folder
+write.csv(penguins_clean, "data/penguins_clean.csv", row.names = FALSE)
+
+
+full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = penguins_clean)
+
+summary(full_model)
+
+# Method 1: Use drop1 to analyse the impact of removing each variable from the final model
+# Drop each term from the model and compare AIC
+drop1(full_model) 
+#because we have an interaction term, drop1 only looks at those terms and as such doesn't give us infromation on anything apart
+#from the interaction term
+
+# Method 2: We can use step to gain an understanding of which unnecessary variables should be dropped 
+#- not just looking at the interaction terms
+#step 1
+step(full_model)
+step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island + 
+                   sex + island:sex, data = penguins_clean)
+summary(step_model)
+
+# step 2: We could then use 1-Way ANOVA on our redcued model
+anova(step_model)
+
+# Method 4: Or we can Use 2-Way ANOVA to compare the original full model with a reduced model that has no interaction
+reduced_model <- lm(body_mass_g ~  species + flipper_length_mm + island + 
+                      sex, data = penguins_clean)
+anova(full_model, reduced_model)
+
+
+
+
