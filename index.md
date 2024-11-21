@@ -1218,6 +1218,7 @@ as.factor(pollib)2                popn   oligarchy:parties
 This table shows the estimated effect of each predictor on the dependent variable `miltcoup`, with the interaction term included in the final model.
  
 ---
+# 6. Bringing It All Together
 
 Now that we've covered a range of individual methods for model selection—evaluation metrics like **F-statistics**, **AIC**, **RSS**, and **Sum of Squares**, as well as **ANOVA** and **stepwise selection**—the next logical step is to understand how to combine these techniques to make more robust and informed decisions when selecting the best model for our data.
 
@@ -1233,6 +1234,75 @@ Each of these methods provides a unique perspective on the model, and by conside
 
 By combining all of these methods, we aim to strike a balance between model complexity and accuracy. For example, we might use **AIC** for model comparison while considering **ANOVA** to ensure the right interaction terms are included. We then might apply **stepwise selection** to iteratively refine the model by removing unnecessary predictors. 
 
-In practice, we use these methods together because no single technique gives a complete picture. By leveraging multiple approaches, we can make more informed decisions, ensure model robustness, and avoid pitfalls like overfitting or underfitting. In the next section, we will demonstrate how to apply these methods together using real data in **R** to guide the process of model selection in a cohesive, step-by-step manner.
+In practice, we utilise these methods at different times and sometimes together because no single technique gives a complete picture. By leveraging multiple approaches, we can make more informed decisions, ensure model robustness, and avoid pitfalls like overfitting or underfitting.
 
-# 6. Bringing It All Together
+## Example
+
+In this example, we will use the penguins_clean data, this data is extacted from the penguins data in the palmerpenguins package which has been cleaned for this turoial. 
+
+
+
+We will evaluate and refine the following **full model** 
+
+```r
+full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = penguins_clean)
+```
+
+### Method 1. Drop1
+
+We begin our model selection by applying `drop1` to our full model
+
+```r
+drop1(full_model)
+```
+This output suggests the interaction term `species:flipper_length_mm` has the smallest impact on the model and removing it leads to a slight improvement in AIC. However, because we have an interaction term, `drop1` only looks at those terms and as such doesn't give us infromation on anything apart from the interaction term. Therefore, in this example it might be worth to apply the `step` function.
+
+### Method 2. Step & One-Way ANOVA
+
+```r
+step(full_model)
+```
+In this output, species, flipper_length_mm, and the interaction term island:sex are kept, while other terms like `species:flipper_length_mm ` are removed based on their contribution to AIC.
+
+This tells us the saem infromation as `drop1` but now we have confirmed that this varaible should be removed, lets have a look at our new models summary:
+
+```r
+step_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex, penguins_clean)
+summary(step_model)
+```
+The summary(step_model) output provides key insights into the fitted linear regression model. The model explains 87.08% of the variance in body mass (R-squared = 0.8708), with significant predictors including speciesGentoo, flipper_length_mm, and sexmale. The p-values for these predictors are very low, indicating they significantly affect body mass. On the other hand, predictors like island and islandTorgersen are not statistically significant, suggesting they can be removed to simplify the model. The overall model is highly significant, with a very low p-value for the F-statistic, confirming its strong predictive power.
+
+Now we can then apply the anova function to our new model to understand if island variabke should be rempved
+```r
+anova(step_model)
+```
+
+The anova(step_model) output provides an analysis of variance (ANOVA) table for the fitted model, which helps assess the significance of each predictor in explaining the variance in body mass (body_mass_g):
+
+species and flipper_length_mm are highly significant, with very low p-values (< 2e-16), indicating that they have a strong effect on body mass.
+sex is also significant, with a p-value less than 2e-16, showing it is an important predictor.
+island has a much higher p-value (0.18592), suggesting it is not a significant predictor and may not be contributing much to the model.
+island:sex shows a significant interaction effect (p = 0.01095), meaning the relationship between island and body mass depends on the sex of the penguins.
+Residuals (unexplained variance) account for 27,806,131 of the total sum of squares, and the residual mean square is 85,821.
+The stars next to the p-values indicate significance: *** for highly significant predictors (p < 0.001), * for moderately significant predictors (p < 0.05), and no stars for predictors with no significant effect.
+
+In summary, the ANOVA table shows that species, flipper_length_mm, sex, and the interaction of island and sex are significant predictors, while island alone is not.
+
+### Method 3: 2-Way ANOVA
+
+If were intersted in deciing whether a modelw ithout interaction terms is betetr than a model with inertaction terms we could use 2-way ANOVA allows us to compare two models (in this case, the full model with interaction terms and a reduced model without interaction terms) to see if the interaction terms improve the model fit significantly. It can help evaluate whether the complexity added by interaction terms is justified.
+
+```r
+anova(full_model, reduced_model)
+```
+This output shows that removing the interaction terms from the full model results in a significant increase in RSS (which suggests that the interactions are important), but the p-value for the reduction is just above 0.05, meaning the improvement is marginal.
+
+In Summary 
+
+
+these methods can be used together or separately depending on the stage of model selection:
+
+
+Stepwise selection might be used first to identify a good baseline model.
+Drop1 and 1-way ANOVA can then be applied to further refine the model.
+2-way ANOVA provides a final check on whether removing interaction terms leads to a significant loss in model fit.
