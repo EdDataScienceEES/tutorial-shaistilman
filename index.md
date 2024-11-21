@@ -764,11 +764,9 @@ In practice, we utilise these methods at different times and sometimes together 
 
 ## Example
 
-In this example, we will use the penguins_clean data, this data is extacted from the penguins data in the palmerpenguins package which has been cleaned for this turoial. 
+In this example, we use the penguins_clean dataset, which is a cleaned version of the `penguins` data from the `palmerpenguins package`. 
 
-
-
-We will evaluate and refine the following **full model** 
+In this example we will evaluate and refine the following **full model** 
 
 ```r
 full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = penguins_clean)
@@ -776,7 +774,7 @@ full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = pe
 
 ### Method 1. Summary
 
-We begin by looking at our model's summary.
+We begin by examining our model's summary.
 
 ```r
 summary(full_model)
@@ -786,7 +784,21 @@ summary(full_model)
 
 The summary of the full_model shows the results of fitting a linear regression model predicting body mass (body_mass_g) based on the factors species, flipper_length_mm, island, and sex, including their interactions. 
 
-Wee that:
+
+The summary provides key insights into the significance of each predictor in the model:
+
+Significant predictors:
+flipper_length_mm (p < 0.001) and sexmale (p < 2e-16) are strong predictors of body mass.
+The interaction term island:sexmale is also significant (p = 0.0299), indicating that the relationship between body mass and the island varies by sex.
+Non-significant predictors:
+speciesChinstrap and islandTorgersen have high p-values, suggesting they don’t have a significant effect on body mass in this model.
+Model performance:
+Residual Standard Error (RSE) of 293.6 means that, on average, the model’s predictions are off by 293.6 grams. Whether this error is acceptable depends on the context and required precision.
+The R-squared value of 87.11% indicates that the model explains a large portion of the variance in body mass, suggesting it is a good fit for the data.
+The F-statistic of 217.6 with a p-value < 2.2e-16 indicates the overall model is highly significant.
+
+
+We that:
 - Significant predictors include flipper_length_mm (p < 0.001) and sexmale (p < 2e-16), indicating a strong impact on body mass. The interactions between island:sexmale are also significant (p = 0.0299). However, predictors like speciesChinstrap and islandTorgersen show high p-values, suggesting they do not significantly affect the outcome.
 - The Residual Standard Error (RSE) of 293.6 indicates  the model's predictions are, on average, off by 293.6 grams. Whether this is acceptable depends on the scale of the data and the level of accuracy you need. If predicting penguin body mass with an error of around 293 grams is considered tolerable in your analysis, it might be acceptable. However, if more precise predictions are required, this could be considered a sign that the model needs improvement.
 - The overall model is highly significant (F-statistic = 217.6, p < 2.2e-16).
@@ -794,19 +806,22 @@ Wee that:
 
 ### Method 2. Drop1
 
-We begin our model selection by applying `drop1` to our full model
+Next, we use the `drop1` function to perform a stepwise model selection:
 
 ```r
 drop1(full_model)
 ```
-This output suggests the interaction term `species:flipper_length_mm` has the smallest impact on the model and removing it leads to a slight improvement in AIC. However, because we have an interaction term, `drop1` only looks at those terms and as such doesn't give us infromation on anything apart from the interaction term. Therefore, in this example it might be worth to apply the `step` function.
+This output suggests the interaction term `species:flipper_length_mm` has the smallest impact on the model and removing it leads to a slight improvement in AIC. However, because we have an interaction term, `drop1` only looks at these interaction terms and as such doesn't give us infromation on anything apart from the interaction term. Therefore, in this example it might be worth to apply the `step` function.
+
+
+However, since drop1 only evaluates interaction terms, it doesn’t provide a full picture of which terms might be unnecessary. For a more comprehensive model refinement, we turn to the step function.
 
 ### Method 3. Step & One-Way ANOVA
 
 ```r
 step(full_model)
 ```
-In this output, species, flipper_length_mm, and the interaction term island:sex are kept, while other terms like `species:flipper_length_mm ` are removed based on their contribution to AIC.
+In this output, species, flipper_length_mm, and the interaction term island:sex are kept, while other terms like `species:flipper_length_mm` are removed based on their contribution to AIC.
 
 This tells us the saem infromation as `drop1` but now we have confirmed that this varaible should be removed, lets have a look at our new models summary:
 
@@ -814,7 +829,7 @@ This tells us the saem infromation as `drop1` but now we have confirmed that thi
 step_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex, penguins_clean)
 summary(step_model)
 ```
-The summary(step_model) output provides key insights into the fitted linear regression model. The model explains 87.08% of the variance in body mass (R-squared = 0.8708), with significant predictors including speciesGentoo, flipper_length_mm, and sexmale. The p-values for these predictors are very low, indicating they significantly affect body mass. On the other hand, predictors like island and islandTorgersen are not statistically significant, suggesting they can be removed to simplify the model. The overall model is highly significant, with a very low p-value for the F-statistic, confirming its strong predictive power.
+We then look at the summary(step_model) output provides key insights into the fitted linear regression model. The model explains 87.08% of the variance in body mass (R-squared = 0.8708), with significant predictors including speciesGentoo, flipper_length_mm, and sexmale. The p-values for these predictors are very low, indicating they significantly affect body mass. On the other hand, predictors like island and islandTorgersen are not statistically significant, suggesting they can be removed to simplify the model. The overall model is highly significant, with a very low p-value for the F-statistic, confirming its strong predictive power.
 
 Now we can then apply the anova function to our new model to understand if island variabke should be rempved
 ```r
@@ -842,7 +857,10 @@ anova(full_model, reduced_model)
 ```
 This output shows that removing the interaction terms from the full model results in a significant increase in RSS (which suggests that the interactions are important), but the p-value for the reduction is just above 0.05, meaning the improvement is marginal.
 
+In summary accoridng ot all of our methods our final model should be 
+
 # 8. Summary 
+
 
 
 These methods can be used together or separately depending on the stage of model selection:
