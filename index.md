@@ -13,33 +13,35 @@
 # Tutorial aims:
 
 1. Understand why we do model selection.
-2. Understand how to write linear models with categorical variables mathematically.
 3. Understand the evaluation metrics used in model selection.
-4. Learn about `ANOVA()` function for model selection.
-5. Learn about `drop1()` function for model selection.
-6. Learn about the `step()` function for model selection.
-7. Learn how to these concepts to real problems in ecology and environmental sciences involving data through worked examples.
+4. Understand how to intepret the output of  `summary()` function, in terms of model selection.
+5. Learn about `ANOVA()` function for model selection and how to intepret the output of it.
+6. Learn about `drop1()` function for model selection and how to intepret the output of it.
+7. Learn about the `step()` function for model selection and how to intepret the output of it.
+8. Learn how to these concepts to real problems in ecology and environmental sciences involving data through worked examples.
 
 # Steps:
 
 1. [**Introduction**](#Intro)
   - [Prerequisites](#Prerequisites)
   - [Data and Materials](#DataMat)
-2. [**Writing Models Mathematically**](#maths)
-  - [Linear Models with Continous Variables](#simple)
-  - [Linear Models with Factor (Categorical) Variables](#cat)
-3. [**Evaluation Metrics**](#eval)
+2. [**Evaluation Metrics**](#eval)
+  - [Coefficient](#Coeff)
+  - [$R^2$](#R)
+  - [Residual Standard Error (RSE)](#RSE)
   - [F-Statistic](#f)
   - [AIC](#AIC)
-4. [**Method I: ANOVA**](#anova)
+  - [RSS and Sum of Sq](#AIC)
+3. [**Summary Function**](#sum)
+  - [Linear Models Without Interaction Terms](#simple)
+  - [Linear Models With Interaction Terms](#interact)
+4. [**ANOVA Model Selection**](#anova)
   - [Recap of One-Way ANOVA](#one)
   - [Two-Way ANOVA](#two)
-5. [**MethodII: Drop1**](#drop)
-  - [Standardization](#Standardization)
-6. [**MethodIII: Step**](#step)
-  - [Standardization](#Standardization)
-7. [**All Together](#together)
-  - [Standardization](#Standardization)
+5. [**Stepwise Model Selection**](#step)
+  - [Drop1](#one)
+  - [Step](#Step)
+6. [**All Together](#together)
 7. [**Summary**](#Summary)
 8. [**Challenge**](#Challenge)
 
