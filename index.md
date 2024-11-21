@@ -12,7 +12,7 @@
 
 # Tutorial aims:
 
-1. Understand why we do model selection.
+1. Understand why and when we perfrom AIC model selection.
 2. Understand the evaluation metrics used in stepwise model selection.
 3. Learn about `drop1()` function for model selection and how to intepret the output of it.
 4. Learn about the `step()` function for model selection and how to intepret the output of it.
@@ -40,11 +40,11 @@
 # 1. Introduction
 {: #Intro}
 
-Data exists in diverse forms, with varying structures, sizes, and complexities. Consequently, linear models—used to explain and predict data behavior—must be flexible enough to accommodate these variations. In environmental research, for instance, datasets often feature categorical variables that require specialized handling to ensure accurate and meaningful analysis. Additionally, as datasets grow larger and more intricate, it becomes increasingly important to include only the most relevant variables in linear models. This approach prevents overcomplication and mitigates the risk of overfitting, which can undermine the model's reliability and generalizability.
+Building effective linear models often involves navigating complex datasets with numerous explanatory variables. Selecting the most relevant variables is essential to ensure models remain interpretable, accurate, and robust, especially in fields like ecology and environmental sciences where data is often large and multifaceted. AIC (Akaike Information Criterion) model selection is a valuable tool for this purpose, providing a systematic approach to refine models by balancing simplicity and predictive performance.
 
-**Effective model selection** plays a critical role in building accurate and efficient models. Achieving this requires a strong understanding of key evaluation metrics, such as AIC (Akaike Information Criterion) and p-values, as well as familiarity with different refinement methods and their interpretations. Mastering model selection empowers researchers to fully leverage complex datasets and develop robust models that strike a balance between simplicity and predictive power.
+This tutorial will guide you through the principles and application of AIC-based model selection for linear models. By the end, you will understand why and when to perform AIC model selection, learn to interpret key evaluation metrics, and gain hands-on experience with drop1() and step() functions in R. These methods will be applied to real-world problems in environmental sciences, equipping you with practical skills for addressing challenges in big data analysis.
 
-This tutorial focuses on performing **model selection** for linear models with categorical variables, using 2 common methods: ANOVA and Stepwise model selection. This tutorial will cover 4 functions in **R** that perfrom these model selection. We will also explore the mathematical formulation of these models and the evaluation metrics that guide the selection process. By working with a variety of datasets, the tutorial will demonstrate how model selection serves as a powerful tool for tackling real-world data challenges. Finally, the three methods will be integrated into a comprehensive framework, providing a practical approach to model refinement.
+
 
 ---
 
@@ -82,25 +82,32 @@ Now we are ready to dive into the world of model selection!
 # 2. Evalution Metrics
 {: #eval}
 
-Now that we have mastered the mathematical formulation of our models, let’s shift our focus to the evaluation metrics used for model selection. While we are already familiar with the **p-value**, it’s important to remember that in general, we aim for a p-value less than 0.05. This threshold corresponds to a 95% significance level, which means there is only a 5% chance of observing the given data (or something more extreme) if the null hypothesis is true - If you've forgetten what a null hypothesis ($H_0$) please see [this ANOVA tutorial](https://ourcodingclub.github.io/tutorials/anova/#hypothesis) - A p-value below 0.05 typically indicates that the predictor is statistically significant and contributes meaningfully to the model, beacuse we reject the null hypothsis that our predictor is insignificant.
-
-In this section, explore the **F-statistic** and the **Akaike Information Criterion (AIC)**. These metrics provide additional insights into model performance, helping us evaluate and compare models based on both their fit and complexity.
+Before we begin jumping into the world of AIC model seledction lets ahve a look at some evaluation metrics that can be used for model selection. While we are already familiar with the **p-value**, it’s important to remember that in real world scnearios there is limiations to the p values, especially in real-world scenarios. In large datasets, they often identify statistically significant variables with negligible practical relevance, leading to overcomplicated models. P-values do not measure the importance or effect size of a variable and can be unreliable in the presence of multicollinearity, where overlapping effects between variables obscure their individual contributions. Additionally, focusing solely on p-values risks overfitting, reducing the model's generalizability and predictive accuracy. To address these issues, it's crucial to complement p-values with other criteria. In this tutorial we will breifly explain $R^2$, Residual Standard Error (RSE), Residul Sum of Sqaures (RSS) and *Akaike Information Criterion (AIC).
 
 ---
 
-## 2.1 F-Statistic and it's Corresponding p-valye
-{: #f}
+## 2.1 $R^2$ and Adjusted $R^2$
+{: #R2}
 
-The **F-statistic** assesses whether a group of predictors in a model, or the overall model itself, significantly improves the fit compared to a simpler baseline model (e.g., one without those predictors). It is calculated as the ratio of explained variance to unexplained variance, standardized by their respective degrees of freedom. 
+The $R^2$ value, measures the proportion of variability in the dependent/response variable that is explained by the predictors in a model. It provides an overall indication of the model's explanatory power, with values ranging from 0 to 1. An $R^2$ value close to 1 suggests that the model explains a large portion of the variability in the outcome, indicating a strong fit. Conversely, a value near 0 means that the model explains little of the variability, implying a weak fit.
 
-A **large F-statistic** indicates that the model or predictors significantly explain the variability in the dependent variable, suggesting that the model improves the fit compared to a simpler model. It means the predictors are likely contributing meaningfully to the model. On the other hand, a **small F-statistic** suggests that the model does not explain much of the variability, indicating that the predictors may not be significantly affecting the outcome and the model might not be useful. In essence, a large F-statistic suggests a strong model, while a small one suggests a weak or ineffective model.
+While a higher $R^2$ is generally desirable, it is important to interpret it with caution, as it does not account for model complexity. Adding more predictors will always increase $R^2$, even if those predictors do not meaningfully improve the model. For this reason, $R^2$ should be considered alongside other metrics, such as adjusted $R^2$, which adjusts for the number of predictors.
 
-The **p-value** associated with the F-statistic, tell us the most in terms of model selection. It measures the probability of observing such a result (or one more extreme) if the null hypothesis is true—i.e., if the additional predictors have no real effect. A **p-value less than 0.05** suggests that the predictors or model terms in question significantly contribute to explaining the response variable, at a 95% confidence level.
-
-When interpreting outputs like those from our  `summary()`, or the functions we will look at such as `anova()`, or `drop1()`, in R a significant F-statistic (with a low p-value) indicates that the model terms being tested add meaningful information, and their inclusion of "extra predictors" is justified.
+The $R^2$ and adjusted $R^2$ values anaylse a models performance as a whole, unlike which assess the significance of individual predictors. This provides a broader perspective on how well the model explains variability and predicts the outcome.
 
 ---
-## 2.2 AIC
+## 2.2 Residual Standard Error (RSE)
+{: #RSE}
+
+The Residual Standard Error (RSE) is a measure of the average amount by which the observed values deviate from the model's predicted values. It quantifies the model's accuracy in predicting the dependent variable, with smaller values indicating better fit. Essentially, RSE represents the standard deviation of the residuals (errors), showing how well the model captures the data's variability.
+
+An RSE close to 0 suggests that the model predictions are very accurate, while a larger RSE indicates greater discrepancies between observed and predicted values, implying a less precise model. Importantly, RSE is expressed in the same units as the response variable, making it intuitively interpretable in the context of the dataset.
+
+When analyzing model outputs in R, such as those from summary(), RSE provides a practical way to assess the model's fit. However, it should not be interpreted in isolation. While a lower RSE is generally better, it must be considered alongside other metrics like $R^2$ and AIC to ensure the model balances accuracy and complexity without overfitting.
+
+- Unlike p-values, which assess the significance of individual predictors the RSE evaluate the model's performance as a whole, providing a broader perspective on how well the model explains variability and predicts the outcome.
+---
+## 2.3 AIC
 {: #AIC}
 
 The **Akaike Information Criterion (AIC)** is a measure used to compare the goodness of fit between statistical models while penalizing model complexity. It helps in selecting the best model among a set of candidates by balancing fit and simplicity. 
@@ -131,7 +138,7 @@ $\text{Sum of Sq} = \sum_{i=1}^n (y_i - \bar{y})^2$, where **$bar{y}$)** is mean
 A **large Sum of Sq** for a predictor suggests that the predictor is important for explaining the response variable and therefore should be kept in the model. Therfore, a small Sum of Sq value suggests that the model is not that important for explaining the response variable and should potentially be removed from the model.
 
 ---
-Together with metrics like AIC and the F-statistic, these measures guide us in deciding which predictors to include or exclude in the model.
+These measures guide us in deciding which predictors to include or exclude in the model.
 So now that we have all of our evaluation metrics we can start having a look at our R functions and understanding their output!
 
 
