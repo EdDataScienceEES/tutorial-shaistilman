@@ -43,7 +43,7 @@ africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn
 step(africa_interact_lm)
 
 
-#Challenge ----
+A#Challenge ----
 # Load required packages
 library(palmerpenguins)
 library(dplyr)
