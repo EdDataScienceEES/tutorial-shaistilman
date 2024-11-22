@@ -658,54 +658,49 @@ This model looks complex and you believe it can be simplified. Using AIC model s
 <details>
   <summary>Click here for the answer</summary>
   
-  ```r
-#define research partners model
-full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+  <p>Here’s the R code to define the model:</p>
 
-#start by looking at the summary so we can find the R^2 and RSE
-summary(full_model)
-#R^2 = 0.8794, Adjusted R^2 = 0.8749, RSE = 284.8 
-```
+  <pre><code class="r">
+  # Define research partners model
+  full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
 
-#### Method 1: Drop1
+  # Start by looking at the summary so we can find the R^2 and RSE
+  summary(full_model)
+  # R^2 = 0.8794, Adjusted R^2 = 0.8749, RSE = 284.8
+  </code></pre>
 
-```r
-#method 1: Drop1
+  <h4>Method 1: Drop1</h4>
+  <pre><code class="r">
+  # Method 1: Drop1
+  drop1(full_model)
+  # This tells us that dropping species:flipper_length_mm results in a slightly reduced AIC, therefore we should drop it
+  
+  # Define new model 
+  new_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+  drop1(new_model)
+  
+  # No terms should be dropped!
+  summary(new_model)
+  # R^2= 0.8792, Adj R^2 = 0.8755, RSE = 284.1
+  </code></pre>
 
-drop1(full_model) 
-#tell us that dropping  species:flipper_length_mm results in a slightly reduced AIC therfore we should drop it 
+  <h4>Method 2: Step</h4>
+  <pre><code class="r">
+  # Method 2: Step
+  step(full_model)
+  # Drops species:flipper_length_mm
+  
+  # New model
+  step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+  
+  # Summary
+  summary(step_model)
+  # R^2 = 0.8792, Adj R^2 = 0.8755, RSE = 284.1
+  </code></pre>
 
-#define new model 
-new_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+  <p>Both methods result in the same final model. We see that the $R^2$ and the RSE have <em>marginally improved</em>. This tells us that our model performs the same as our research partner's model. However, we should probably narrow down our research questions and investigate if specific explanatory variables affect body mass.</p>
 
-drop1(new_model)
+</details>
 
-#no terms should be dropped!
-summary(new_model)
-#R^2= 0.8792, Adh R^2 = 0.8755, RSE = 284.1
-```
-
-#### Method 2: Step
-```r
-
-
-#method 2
-step(full_model)
-#drops species:flipper_length_mm
-
-#new model:
-step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island* sex
-                 + bill_length_mm + bill_depth_mm, data = penguins_clean)
-
-#summary:
-summary(step_model)
-#R^2 =  0.8792, Adj R^2 = 0.8755, RSE = 284.1
-
-```
-
-Both methods result in the same final model. We see that the $R^2$ and the RSE have *marginally improved*. This tells us that our model perfroms the same as our reserach partners model. However, we should probably narrow down our research questions and investigate if specfifc explanatory varaibles affect body mass. 
-
-
-</details> ```
 
 
