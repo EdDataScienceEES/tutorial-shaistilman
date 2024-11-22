@@ -122,6 +122,69 @@ The `drop1` function evaluates what happens to the AIC if each variable in the m
 
 **The `drop1` Table**
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: pink; /* Sets the pink background */
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: lightcoral; /* Optional: darker shade for headers */
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Column</th>
+                <th>What It Represents</th>
+                <th>Why It's Important</th>
+                <th>How Each Column Helps Track Impact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Df (Degrees of Freedom)</td>
+                <td>The number of parameters (or pieces of information) associated with each predictor minus 1.</td>
+                <td>Indicates the complexity of the model. A predictor with higher Df typically contributes more parameters to the model. The removal of a predictor reduces the model's Df.</td>
+                <td>Shows how the number of parameters changes when a predictor is added or removed.</td>
+            </tr>
+            <tr>
+                <td>Sum of Squares (Sum of Sq)</td>
+                <td>The amount of variation explained by each predictor in the model.</td>
+                <td>Shows the contribution of each predictor to explaining the variance in the dependent variable. Larger values indicate greater contribution.</td>
+                <td>Indicates how much variation is explained by a predictor. A larger value means the predictor contributes more to explaining the response variable.</td>
+            </tr>
+            <tr>
+                <td>Residual Sum of Squares (RSS)</td>
+                <td>The amount of unexplained variance (errors) after fitting the model.</td>
+                <td>A lower RSS indicates a better-fitting model because the model explains more of the variance in the data. The goal is to minimize RSS.</td>
+                <td>Reveals how much unexplained variance remains after fitting the model. A lower RSS suggests better model fit.</td>
+            </tr>
+            <tr>
+                <td>Akaike Information Criterion (AIC)</td>
+                <td>A measure used for model selection that balances model fit and complexity (number of parameters).</td>
+                <td>A lower AIC indicates a better model that balances fit and complexity. The `step()` function selects models based on the lowest AIC.</td>
+                <td>The primary measure for model selection. The goal is to minimize AIC by selecting the model with the best balance between complexity and fit.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
+
 <table border="1" style="background-color: #ffe6e6;">
   <thead>
     <tr>
