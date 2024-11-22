@@ -76,12 +76,18 @@ The **AIC** is a widely used metric for evaluating model quality by balancing go
 
 <center><img src="{{ site.baseurl }}/figures/AIC_Chart.png" alt="Img" style="width: 100%; height: auto;"></center>
 
-When comparing models, the one with the smallest AIC is typically preferred, as it represents the most efficient explanation of the data with minimal risk of overfitting. However, it is crucial to remember that AIC values are relative and can only be compared across models fitted to the same dataset.  Furthermore, while AIC favors simpler models, it should not be used in isolation. It complements other evaluation metrics, offering a holistic approach to model selection by ensuring the chosen model is both interpretable and generalisable.
+When comparing models, the one with the smallest AIC is typically preferred, as it represents the most efficient explanation of the data with minimal risk of overfitting. However, it is crucial to remember that AIC values are relative and can only be compared across models fitted to the same dataset.  Furthermore, while AIC favors simpler models, it should not be used in isolation. It complements other evaluation metrics, offering a holistic approach to model selection by ensuring the chosen model is both interpretable and generalisable. To compare our models using AIC, you need to calculate the AIC of each model. If a model is more than 2 AIC units lower than another, then it is considered significantly better than that model.
+
+Note that AIC values are **relative**, meaning they are only meaningful when comparing two models that describe the **same dataset**. Comparing AIC values across models built on different datasets or subsets of data would lead to misleading conclusions and we do not want that!
 
 For those of you who are intersted the formula is as follows:
 
 <center><img src="{{ site.baseurl }}/figures/AIC_Formula.jpeg" alt="Img" style="width: 100%; height: auto;"></center>
 
+
+L is the log-likelihood estimate which the likelihood that the model could have produced your observed y-values. 
+
+Note that the default K is always 2, so if your model uses one independent variable your K will be 3, if it uses two independent variables your K will be 4, and so on.
 
 ---
 So now that we know what AIC is, lets have a look at how we can apply it when performing model selection!
@@ -210,8 +216,6 @@ drop1(africa_lm)
 We get the following output:
 
 <center><img src="{{ site.baseurl }}/figures/drop1(africa_lm).png" alt="Img" style="width: 100%; height: auto;"></center>
-
-
 
 ### What does this mean?
 
