@@ -341,67 +341,6 @@ For each iteration the `step` function creates a summary table which shows the d
 
 Each column tells us something different for the model we are looking at:
 
-<table border="1" style="background-color: #ffe6e6;">
-  <thead>
-    <tr>
-      <th><b>Column</b></th>
-      <th><b>What It Represents</b></th>
-      <th><b>Why It's Important</b></th>
-      <th><b>How Each Column Helps Track Impact</b></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><b>Df (Degrees of Freedom)</b></td>
-      <td>
-        The number of parameters (or pieces of information) associated with each predictor minus 1.
-      </td>
-      <td>
-        Indicates the complexity of the model. A predictor with higher Df typically contributes more parameters to the model. The removal of a predictor reduces the model's Df.
-      </td>
-      <td>
-        Shows how the number of parameters changes when a predictor is added or removed.
-      </td>
-    </tr>
-    <tr>
-      <td><b>Sum of Squares (Sum of Sq)</b></td>
-      <td>
-        The amount of variation explained by each predictor in the model.
-      </td>
-      <td>
-        Shows the contribution of each predictor to explaining the variance in the dependent variable. Larger values indicate greater contribution.
-      </td>
-      <td>
-        Indicates how much variation is explained by a predictor. A larger value means the predictor contributes more to explaining the response variable.
-      </td>
-    </tr>
-    <tr>
-      <td><b>Residual Sum of Squares (RSS)</b></td>
-      <td>
-        The amount of unexplained variance (errors) after fitting the model.
-      </td>
-      <td>
-        A lower RSS indicates a better-fitting model because the model explains more of the variance in the data. The goal is to minimize RSS.
-      </td>
-      <td>
-        Reveals how much unexplained variance remains after fitting the model. A lower RSS suggests better model fit.
-      </td>
-    </tr>
-    <tr>
-      <td><b>Akaike Information Criterion (AIC)</b></td>
-      <td>
-        A measure used for model selection that balances model fit and complexity (number of parameters).
-      </td>
-      <td>
-        A lower AIC indicates a better model that balances fit and complexity. The `step()` function selects models based on the lowest AIC.
-      </td>
-      <td>
-        The primary measure for model selection. The goal is to minimize AIC by selecting the model with the best balance between complexity and fit.
-      </td>
-    </tr>
-  </tbody>
-</table>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
