@@ -706,5 +706,6 @@ summary(step_model)
 Both methods result in the same final model. We see that the $R^2$ and the RSE have *marginally improved*. This tells us that our model perfroms the same as our reserach partners model. However, we should probably narrow down our research questions and investigate if specfifc explanatory varaibles affect body mass. 
 
 
-</details>
+</details> ```
+
 
