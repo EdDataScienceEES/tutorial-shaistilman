@@ -655,7 +655,10 @@ This model looks complex and you believe it can be simplified. Using AIC model s
  *note that there is multiple correct answers based on your own philsophy of model selection*
 
 
-```r
+<details>
+  <summary>Click here for the answer</summary>
+  
+  ```r
 #define research partners model
 full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
 
@@ -701,3 +704,7 @@ summary(step_model)
 ```
 
 Both methods result in the same final model. We see that the $R^2$ and the RSE have *marginally improved*. This tells us that our model perfroms the same as our reserach partners model. However, we should probably narrow down our research questions and investigate if specfifc explanatory varaibles affect body mass. 
+
+
+</details>
+
