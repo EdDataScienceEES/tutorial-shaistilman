@@ -14,59 +14,60 @@
   - [Prerequisites](#Prerequisites)
   - [Data and Materials](#DataMat)
 2. [**The AIC Value**](#eval)
-3. [**AIC Model Selection**](#step)
-  - [Drop1](#one)
-  - [Step](#Step)
+3. [**AIC Model Selection**](#selection)
+  - [Drop1](#drop)
+  - [Step](#step)
 4. [**Limitation to AIC Model Selection**](#lim)
-5. [**Summary**](#Summary)
-6. [**Challenge**](#Challenge)
+5. [**Summary**](#summary)
+6. [**Challenge**](#challenge)
 
----
-# 1. Introduction
+### 1. Introduction
 {: #Intro}
 
-Building effective linear models often involves navigating complex datasets with numerous explanatory variables. Selecting the most relevant variables is essential to ensure models remain interpretable, accurate, and robust, especially in fields like ecology and environmental sciences where data is often large and multifaceted. AIC (Akaike Information Criterion) model selection is a valuable tool for this purpose, providing a systematic approach to refine models by balancing simplicity and predictive performance.
+Building effective linear models is a key skill when working with complex datasets that contain many explanatory variables. Whether you're tackling environmental data, ecology studies, or any field with large and diverse datasets, selecting the right variables is crucial for creating models that are both accurate and easy to interpret. AIC (Akaike Information Criterion) model selection provides a powerful, systematic approach to help us achieve this balance, ensuring models are both simple and predictive.
 
-This tutorial will guide you through the principles and application of AIC-based model selection for linear models. By the end, you will understand why and when to perform AIC model selection, learn to interpret key evaluation metrics, and gain hands-on experience with drop1() and step() functions in R. These methods will be applied to real-world problems in environmental sciences, equipping you with practical skills for addressing challenges in big data analysis.
-
-
+This tutorial will walk you through the core concepts and practical applications of AIC-based model selection for linear models. By the end, you'll understand why and when AIC is used, and you'll gain hands-on experience with the `drop1()` and `step()` functions in R. These methods are particularly valuable for refining models in real-world scenarios, equipping you with skills for analyzing large, complex datasets.
 
 ---
 
 ## Prerequisites
 {: #Prerequisites}
 
-This tutorial is designed for novice and intermediate learners in statistical analysis who enjoy understadnign the theory behind R fucntions. If this is not your preference, you might find this tutorial less suited to your needs—consider exploring other resources, such as , which serves as a precursor to this guide.  
-
-Depending on your level of expertise, you can tailor your experience by focusing on the sections most relevant to you. Beginners may want to concentrate on just applying methods like `step` and `drop1`. However, to get the most out of this tutorial, it’s helpful to have a foundational understanding of the typical evalutaion metrics used with linear models such as $R^2$ and $RSE$
-
-While we will be using the programming language **R** throughout this tutorial, the principles and techniques covered are applicable across various programming environments. To fully engage with the coding examples provided, you should have a basic understanding of:  
-- **Linear models** using the `lm()` function  
-- Interpreting the **summary output** of linear models  
-
-
-If you’re new to linar models in R or need a refresher, the Coding Club website offers excellent resources to get you up to speed:  
-- [From Distruvutions to Linear Modles](https://ourcodingclub.github.io/tutorials/modelling/)  
+This tutorial is ideal for those with a basic or intermediate understanding of statistical analysis, particularly if you are curious about how R functions work in practice. If you're new to linear models in R or want to refresh your knowledge, check out the following tutorials on the Coding Club website to build your foundation:  
+- [From Distributions to Linear Models](https://ourcodingclub.github.io/tutorials/modelling/)  
 - [Introduction to Model Design](https://ourcodingclub.github.io/tutorials/model-design/)
 
+While this tutorial focuses on using **R** to apply AIC model selection, the core principles are relevant in other programming environments too. To get the most out of the examples, you should be familiar with the following:  
+- **Linear models** using the `lm()` function in R  
+- Interpreting the **summary output** of linear models, with a basic understanding of key metrics such as \(R^2\) and Residual Standard Error (RSE)
 
-This tutorial builds on these foundational skills, focusing on the process of AIC model selection for linear models with categorical and numerical variables.
+This tutorial builds on your foundational linear modeling skills and guides you through the process of AIC model selection for both categorical and numerical variables.
 
 ---
 
 ## Data and Materials
 {: #DataMat}
 
-You can find all the data that you require for completing this tutorial on this [GitHub repository](). We encourage you to download the data to your computer and work through the examples along the tutorial as this reinforces your understanding of the concepts taught in the tutorial. In this tutorial we will work with data from the `faraway` and `palmerspenguin` package, both of these are package in R containing different datasets. 
+All the data you'll need for this tutorial can be found in the [GitHub repository](https://github.com/EdDataScienceEES/tutorial-shaistilman). We recommend downloading the data to your computer so you can follow along with the examples throughout the tutorial. This hands-on approach will help reinforce your understanding of the concepts covered.
 
-Now we are ready to dive into the this tutorial!
+For this tutorial, we'll be working with datasets from two R packages: `faraway` and `palmerpenguins`. Both packages contain a variety of datasets for different applications. Our primary focus will be the `africa_data` dataset from the `faraway` package, which explores factors influencing military coups (denoted by `miltcoup`). The model will include several predictor variables such as:
+
+- **Oligarchy** (`oligarchy`)
+- **Political liberties** (`pollib`)
+- **Number of political parties** (`parties`)
+- **Population size** (`popn`)
+- **Country size** (`size`)
+- **Number of elections** (`numelec`)
+- **Number of regimes** (`numregim`)
+
+By using this dataset, you'll have the opportunity to apply AIC-based model selection to a real-world problem, exploring how these factors influence military coups.
 
 ---
 
 # 2. Akaike Information Criterion (AIC)  
 {: #AIC}  
 
-Up until now the main evaluation metric on how to make model-based descionshas been the **p-value** and although this is a powerful metric in real-world scenarios it has limitations. In large datasets, p-values often identify statistically significant variables that have negligible practical relevance, leading to unnecessarily complex models. Additionally, p-values do not measure a variable’s importance or effect size and can become unreliable in the presence of multicollinearity, where overlapping effects between predictors obscure their individual contributions. Focusing solely on p-values risks overfitting, reducing a model's generalizability and predictive accuracy.  
+Up until now the main evaluation metric on how to make model-based descions has been the **p-value** and although this is a powerful metric in real-world scenarios it has limitations. In large datasets, p-values often identify statistically significant variables that have negligible practical relevance, leading to unnecessarily complex models. Additionally, p-values do not measure a variable’s importance or effect size and can become unreliable in the presence of multicollinearity, where overlapping effects between predictors obscure their individual contributions. Focusing solely on p-values risks overfitting, reducing a model's generalizability and predictive accuracy.  
 
 To address these limitations, we must consider broader evaluation metrics that assess both the accuracy and complexity of a model. In this tutorial we will focus on the **Akaike Information Criterion (AIC)** and how it can be used in model selection. 
 
@@ -99,7 +100,7 @@ So now that we know what AIC is, lets have a look at how we can apply it when pe
 In this tutorial we will focus on **backwards stewpwise AIC model selection**, which is a systematic approach to refine a statistical model by removing explanatory variables from a large complex model based on the AIC. Stay tuned for next weeks tutorial on **forward stewpwise AIC model selection**. The goal is to strike a balance between a model that fits the data well and one that is not overly complex, thus the accuracy metric we focus on is AIC!
 
 
-### When would we use AIC model selection?
+### When Would We Use AIC model selection?
 
 We use model selection when we are modeling a large data set that has multiple potential explanatory variables. For example, a model on climate data might include variables such as temperature, precipitation, wind speed, solar radiation and many more! By selecting the most relevant variables, we can simplify the model while maintaining its predictive accuracy.
 
@@ -115,14 +116,12 @@ To begin with lets have a look at how we can do AIC model selection using the `d
 
 The `drop1` function in R is used during model selection to evaluate the impact of removing individual variables from a model. It one of the most commonly used function in stepwise model selection and it works by comparing the AIC values of models with and without each variable. We remeber from section 3 a **lower AIC** indicates a better model, as it suggests a better balance between fit and complexity and a **high Sum of Sq** indicates the predictor we are looking at significantly helps explain the response variable.
 
-**What `drop1` Does**  
+### What Does `drop1` Do ? 
 The `drop1` function evaluates what happens to the AIC if each variable in the model is removed one at a time. For each variable:
    - It calculates the AIC of the model without that variable.
    - It provides a table showing the AIC for all possible one-variable-removal models.
 
 **The `drop1` Table**
-
-
 
 <table border="1" style="background-color: #ffe6e6;">
   <thead>
@@ -186,15 +185,17 @@ The `drop1` function evaluates what happens to the AIC if each variable in the m
 </table>
 
 
-**How to Interpret the Results**  
-   - If removing a variable reduces the AIC (i.e., leads to a lower AIC), it suggests that the model improves when that variable is dropped. This may happen if the variable does not contribute significantly to the model or introduces unnecessary complexity.
-   - If removing a variable increases the AIC, it indicates that the variable is important for the model, and dropping it would harm the balance between fit and complexity.
+### How Do We Interpret The Results?
+
+ - If removing a variable reduces the AIC (i.e., leads to a lower AIC), it suggests that the model improves when that variable is dropped.  This may happen if the variable does not contribute significantly to the model or introduces unnecessary complexity.
+
+ - If removing a variable increases the AIC, it indicates that the variable is important for the model, and dropping it would harm the balance between fit and complexity.
 
 Therefore, we drop the variable that results in the lowest AIC, this may seem a bit counterintuitive as what we want is the lowest AIC model. However, the AIC value represnets the AIC of the model **without** this variable and if this AIC is lower than the current model’s AIC it means that dropping that variable improves the overall model. Thus, in stepwise regression, this variable is removed because it leads to the greatest improvement in model quality according to the AIC.
 
 Lets have a look at an example of `drop1` and look at how we can interpret the output it gives us. 
 
-In this example we are analysing the `africa_data` dataset from the `faraway` package to explore factors influencing military coups (`miltcoup`). The model includes several predictors, such as `oligarchy`, political liberties (`pollib`), the number of parties (`parties`), population (`popn`), size (`size`), the number of elections (`numelec`), and the number of regimes (`numregim`). 
+In this section we are analysing the `africa_data` dataset from the `faraway` package to explore factors influencing military coups (`miltcoup`). The model includes several predictors, such as `oligarchy`, political liberties (`pollib`), the number of parties (`parties`), population (`popn`), size (`size`), the number of elections (`numelec`), and the number of regimes (`numregim`). 
 
 But how do we know which ones to use? Lets first consider the case where we dont have interaction terms.
 
@@ -219,7 +220,7 @@ We get the following output:
 
 <center><img src="{{ site.baseurl }}/figures/drop1(africa_lm).png" alt="Img" style="width: 100%; height: auto;"></center>
 
-### What does this mean?
+#### What does this mean?
 
 Lets look at what each collumn tells us:
 
@@ -245,7 +246,7 @@ Evaluates model quality by balancing fit and complexity. Lower AIC values indica
 - `oligarchy`: Removing this predictor raises the AIC to **43.882**, indicating its importance.
 - `numregim`: Removing this predictor slightly reduces the AIC to **29.418**, suggesting it may be worth considering for removal.
 
-### So What are our Key Insights?
+#### So What are our Key Insights?
 
 **1. `oligarchy` is critical.**  
 Removing `oligarchy` leads to a large increase in RSS (from **57.249** to **81.575**) and a substantial worsening of AIC (from **31.009** to **43.882**). This indicates `oligarchy` is essential for explaining `miltcoup`. 
@@ -259,7 +260,7 @@ Both variables contribute noticeable sums of squares (7.35 and 4.01, respectivel
 **4. `popn`, `size`, and `numelec` have minimal impact.**  
 These predictors have the smallest AIC changes when removed (from **31.009** to **30.308**, **29.726**, and **29.744**, respectively). Their contributions to RSS are also modest, making them potential candidates for exclusion.
 
-### So What Our Are Next Steps
+#### So What Our Are Next Steps
 Based on the `drop1` results, the next step might involve:
 - Retaining `oligarchy` as a key predictor.
 - Considering the removal of `numregim` to simplify the model while improving AIC.
@@ -291,7 +292,7 @@ We get the following output:
 
 <center><img src="{{ site.baseurl }}/figures/drop1(africa_interact_lm).png" alt="Img" style="width: 100%; height: auto;"></center>
 
-### So What Are Our Key Insights?
+#### So What Are Our Key Insights?
 
 **1. The interaction term `oligarchy:parties` is moderately important.**  
 Removing `oligarchy:parties` increases the RSS from **51.328** to **57.249** and worsens the AIC from **28.424** to **31.009**. This indicates the interaction contributes meaningfully to the model, although not as critically as some individual variables.
@@ -309,7 +310,7 @@ Removing `popn` raises the RSS to **55.358** and slightly worsens the AIC to **2
 **5. `numelec` has a modest impact.**  
 Removing `numelec` increases RSS to **53.719** and slightly worsens AIC to **28.336**, suggesting its contribution is modest but not negligible.
 
-### So What Are Our Next Steps
+#### So What Are Our Next Steps
 Based on the `drop1` results, the following steps are recommended:  
 - Retain the interaction term `oligarchy:parties` and `as.factor(pollib`, as they contribute significantly to the model.  
 - Consider removing `size` and `numregim` to simplify the model while improving AIC.  
@@ -328,14 +329,14 @@ Since we only remove one term at a time (focusing on the term whose removal lead
 
 The `step` function streamlines the process by automating the stepwise approach. It iteratively adds or removes variables to optimize the model based on AIC. Essentially, the `step` function handles the repeated application of `drop1` for us, outputting the final model where removing any explanatory variable would increase the AIC.
 
-**How the `step` Function Works**
+### How Does The `step` Function Work?
 
 The `step` function in R automates stepwise model selection by evaluating the AIC for all deletions of predictors at each step. Here's how it works:
 1. The function starts with our initial model with lots of explanatory variables in it.
 2. It iteratively evaluates potential models by removing each variable and calculating the AIC, selecting the model with the **lowest AIC** to carry forward.
 3. It repeats this process untill removing variables reduces the AIC, i.e we have the 'best' model accoridng to AIC>
 
-**How to Interpret the Results**  
+### How Do We Interpret The Results? 
 
 For each iteration the `step` function creates a summary table which shows the details of each model, the models are listed from **lowest to highest** AIC. The **<none> Row** shows the current model’s performance (AIC, RSS, etc.) before any changes (i.e., before any predictor is removed), it serves as a reference point for comparing the impact of removing predictors and helps assess how each variable removal affects the model.       
 
@@ -414,7 +415,7 @@ Each column tells us something different for the model we are looking at:
 - *Removed variables:** Variables whose exclusion lowers the AIC were likely not contributing significantly to the model. 
 
 
- **Why Use `step`?**  
+### Why Would We Use `step` Function?  
 The `step` function is particularly useful when dealing with a large number of predictors, as it automates the model selection process. It ensures a systematic evaluation of the impact of each variable, saving time and effort compared to manually using `drop1`. However, caution is needed to avoid overfitting or underfitting, as the process is driven solely by AIC without considering domain knowledge or practical significance.  
  
 Lets have a look at some examples with and without interaction terms! Lets continue with the `africa` data from the faraway package about the miltary coups and politics in sub-Saharan Africa. 
@@ -445,7 +446,7 @@ We get the following output:
 Try not be put off by how large an output this is as it is pretty straightforward to interpret!
 The output of the `step()` function is a result of **stepwise model selection** using AIC. The goal is to iteratively remove predictors from the model (or add them, if necessary) to minimise the AIC, which balances model fit and complexity. Here's a breakdown of each part of the output:
 
-### Step 1: Initial Model:
+#### Step 1: Initial Model:
 
 Before we see our summary table we have the following output:
 ```r
@@ -472,14 +473,14 @@ Based on the output we can see that:
 - Removing `numregim` decreases AIC from **31.01** to **29.42**, which suggests that removing `numregim` improves the model.
 - Removing `oligarchy` leads to a much worse AIC of **43.88**, indicating that it’s an important predictor.
 
-### Step 2: New Model After Removing `numregim`
+#### Step 2: New Model After Removing `numregim`
 
-Before we see our summary table we have the following output:
+Before we see our next summary table we have the following output:
 ```r
 Step:  AIC=29.42
 miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size + numelec
 ```
-This tells that the updated model after removing `numregim` has an AIC of **29.42**, and what variables it contains.
+This tells that the updated model after removing `numregim` has an AIC of **29.42**, and what variables it contains. This model becomes our new basline model and is now what the `<none>` variable represents.
 
 We get the following summary output.
 ```r
@@ -523,29 +524,27 @@ Coefficients:
            parties  
            0.03002  
 ```
-This `Coefficients` table shows the estimated effect of each predictor on the dependent variable `miltcoup`.
+This `Coefficients` table shows the estimated effect of each predictor on the dependent variable `miltcoup`, similar to the `summary` output we've seen before.
 
 ---
 
-What happens if we have an interaction term? Nothing! The `step` function treats the interaction term as a variable in itself
+What happens if we have an interaction term? The exact same thing as the `drop1` function, the `step` function treats the interaction term as a variable in itself and ignores the compenents of it for the exact same reason! 
 
 ### Example With an Interaction Term
 
 Lets have a look at an example think back to our `africa_interact_lm` model where we assumed there was interaction betweeen the number years country ruled by military oligarchy from independence to 1989 and the number of legal political parties in 1993.
 
 ```r
-#define linear model with interaction
 africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
 + numelec + numregim, africa_data)
 ```
-This is a very complex model with lots of predictors. Lets applt the  `step` fucntion to reduce our model so we can be sure that all these predictors are necessary and we are not overfitting? 
+This is a very complex model with lots of predictors. Lets apply the  `step` fucntion to reduce our model so we can be sure that all these predictors are necessary and we are not overfitting? 
 
 ```r
 #apply step()
 step(africa_interact_lm)
 ```
 This gives us the following output:
-
 
 <center><img src="{{ site.baseurl }}/figures/step(africa_interact_lm).png" alt="Img" style="width: 100%; height: auto;"></center>
 
@@ -579,7 +578,7 @@ From this output, we can observe:
 - **Removing `size`** decreases the AIC from 28.42 to 26.87, indicating that `size` can be removed without negatively impacting the model's performance.
 - **Removing `oligarchy:parties`** leads to a much higher AIC (31.01), suggesting that the interaction term is important for the model.
 
-This repeats untill we get to our final model in exactly the same way as our previous example.
+The `step` function then  removes `size` from the model and repeats this process. This is repeated untill we get to our final model in exactly the same way as our previous example.
 
 The final model, with the lowest AIC, in this example is:
 
@@ -602,100 +601,103 @@ as.factor(pollib)2                popn   oligarchy:parties
 This table shows the estimated effect of each predictor on the dependent variable `miltcoup`, with the interaction term included in the final model.
 
 ---
-Now you can succesfully perfom AIC Model Selection! Before we wrap up there is some important notes we need to cover about the AIC value.
+Now we can succesfully perfom AIC Model Selection! 
+
+Well done for making it this far, before we wrap up there is some important notes we need to cover about the AIC value.
 
 ---
 # 4. Limitation of AIC Model Selection
-
+{: #lim}  
 <center><img src="{{ site.baseurl }}/figures/AIC Warning.jpeg" alt="Img" style="width: 100%; height: auto;"></center>
 
+AIC (Akaike Information Criterion) is a useful tool to compare different models, but it’s important to remember that it’s not a measure of how good a model is on its own. Instead, it helps us find the best balance between a model’s simplicity (fewer variables) and how well it fits the data. However, just because a model has a low AIC doesn’t mean it’s the best overall—sometimes the "best" model according to AIC might still not explain things well or give us meaningful results.
+
+It's also crucial not to drop variables from a model just to make the AIC look better. For example, if we're studying how size is affected by gender, removing "gender" just because it lowers the AIC could lead us to miss out on important information. Dropping variables without thinking about the bigger picture could mean the model doesn't answer the questions we set out to explore.
+
+That’s why we should always use AIC alongside other measures, like Residual Standard Error (RSE), \( R^2 \), and F-statistics, to make sure our model truly explains the data and helps us answer our research questions in the best way possible. AIC gives us helpful clues, but it’s only part of the story!
 
 ---
-
-
 # 5. Summary
 
-----
+In this tutorial, we explored the AIC value and how it can be applied in model selection. It helps us find the right balance between model accuracy and simplicity, making it especially useful in fields like ecology and environmental sciences where datasets are often large and complex.
 
-# 6. Challenge
+#### Key Points:
+1. **Why AIC?**
+   - AIC allows us to identify the best model by comparing different options based on how well they explain the data and how simple they are. A model with a lower AIC is preferred because it offers the best combination of fit and simplicity.
+   - Remember, AIC values are **relative**, you can only compare them when the models describe the same dataset, and they only tell **part** of the story!
 
+2. **AIC Stepwise Model Selection**
+   - **The Drop1 Function**: This function evaluates what happens if we remove each variable from the model. It shows us which variables are crucial for the model’s quality, helping us decide which ones to keep.
+   - **The Step Function**: This function automates this process, adjusting the model by adding or removing variables to find the one with the lowest AIC. It saves time and effort by systematically narrowing down the best model.
 
-In this example, we use the penguins_clean dataset, which is a cleaned version of the `penguins` data from the `palmerpenguins package`. Compaare the symmarises has it improved?
+3. **When to Use AIC**
+   - AIC is especially helpful when working with large datasets that have many potential explanatory variables. The goal is to find a model that explains the data well without including too many unnecessary details.
 
-In this example we will evaluate and refine the following **full model** 
+4. **Limitations of AIC**
+   - AIC is a useful tool, but it’s not the only measure of how good a model is. It’s important to also look at other metrics, like $R^2$ and F-statistics, to make sure the model truly fits the data and answers your research questions.
+   - Don’t just drop variables from your model because it makes the AIC lower; this can lead to missing out on important information. Always think carefully about what each variable contributes to your model.
+
+#### Conclusion:
+AIC is a great tool for selecting models, but it’s not the whole picture. Using **drop1** and **step** functions in R helps refine your model by keeping the most important variables and removing those that aren’t contributing much. However, it’s crucial to think about your research questions and use other evaluation methods to ensure your model is meaningful and reliable.
+
+---
+# 6. Challenge 
+
+You have been asked to research what effects the body mass of penguins! Your research partner has extracted the `penguins` data from the palmerspenguin package and has cleaned it up. They then constructed the following model to answer the research question.
 
 ```r
-full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = penguins_clean)
+full_mofull_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
 ```
 
-### Method 1. Summary
+This model looks complex and you believe it can be simplified. Using AIC model selection decide *based off the AIC value* which terms should be kept in the model. Compare the summaries of the ful model and the final model you've selected, has the $R^2$ and RSE value improved?
 
-We begin by examining our model's summary.
+
+ *note that there is multiple correct answers based on your own philsophy of model selection*
+
 
 ```r
+#define research partners model
+full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+
+#start by looking at the summary so we can find the R^2 and RSE
 summary(full_model)
+#R^2 = 0.8794, Adjusted R^2 = 0.8749, RSE = 284.8 
 ```
 
-![ah](https://github.com/EdDataScienceEES/tutorial-shaistilman/blob/master/figures/summary(full_model).png)
-
-The summary of the full_model shows the results of fitting a linear regression model predicting body mass (body_mass_g) based on the factors species, flipper_length_mm, island, and sex, including their interactions. 
-
-
-The summary provides key insights into the significance of each predictor in the model:
-
-Significant predictors:
-flipper_length_mm (p < 0.001) and sexmale (p < 2e-16) are strong predictors of body mass.
-The interaction term island:sexmale is also significant (p = 0.0299), indicating that the relationship between body mass and the island varies by sex.
-Non-significant predictors:
-speciesChinstrap and islandTorgersen have high p-values, suggesting they don’t have a significant effect on body mass in this model.
-Model performance:
-Residual Standard Error (RSE) of 293.6 means that, on average, the model’s predictions are off by 293.6 grams. Whether this error is acceptable depends on the context and required precision.
-The R-squared value of 87.11% indicates that the model explains a large portion of the variance in body mass, suggesting it is a good fit for the data.
-The F-statistic of 217.6 with a p-value < 2.2e-16 indicates the overall model is highly significant.
-
-
-We that:
-- Significant predictors include flipper_length_mm (p < 0.001) and sexmale (p < 2e-16), indicating a strong impact on body mass. The interactions between island:sexmale are also significant (p = 0.0299). However, predictors like speciesChinstrap and islandTorgersen show high p-values, suggesting they do not significantly affect the outcome.
-- The Residual Standard Error (RSE) of 293.6 indicates  the model's predictions are, on average, off by 293.6 grams. Whether this is acceptable depends on the scale of the data and the level of accuracy you need. If predicting penguin body mass with an error of around 293 grams is considered tolerable in your analysis, it might be acceptable. However, if more precise predictions are required, this could be considered a sign that the model needs improvement.
-- The overall model is highly significant (F-statistic = 217.6, p < 2.2e-16).
-- The model explains 87.11% of the variance in body mass (R-squared = 0.8711), which suggests this model is a relevatively good fit for the data.
-
-### Method 2. Drop1
-
-Next, we use the `drop1` function to perform a stepwise model selection:
+#### Method 1: Drop1
 
 ```r
-drop1(full_model)
+#method 1: Drop1
+
+drop1(full_model) 
+#tell us that dropping  species:flipper_length_mm results in a slightly reduced AIC therfore we should drop it 
+
+#define new model 
+new_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+
+drop1(new_model)
+
+#no terms should be dropped!
+summary(new_model)
+#R^2= 0.8792, Adh R^2 = 0.8755, RSE = 284.1
 ```
-This output suggests the interaction term `species:flipper_length_mm` has the smallest impact on the model and removing it leads to a slight improvement in AIC. However, because we have an interaction term, `drop1` only looks at these interaction terms and as such doesn't give us infromation on anything apart from the interaction term. Therefore, in this example it might be worth to apply the `step` function.
 
-
-However, since drop1 only evaluates interaction terms, it doesn’t provide a full picture of which terms might be unnecessary. For a more comprehensive model refinement, we turn to the step function.
-
-### Method 3. Step & One-Way ANOVA
-
+#### Method 2: Step
 ```r
+
+
+#method 2
 step(full_model)
-```
-In this output, species, flipper_length_mm, and the interaction term island:sex are kept, while other terms like `species:flipper_length_mm` are removed based on their contribution to AIC.
+#drops species:flipper_length_mm
 
-This tells us the saem infromation as `drop1` but now we have confirmed that this varaible should be removed, lets have a look at our new models summary:
+#new model:
+step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island* sex
+                 + bill_length_mm + bill_depth_mm, data = penguins_clean)
 
-```r
-step_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex, penguins_clean)
+#summary:
 summary(step_model)
+#R^2 =  0.8792, Adj R^2 = 0.8755, RSE = 284.1
+
 ```
-We then look at the summary(step_model) output provides key insights into the fitted linear regression model. The model explains 87.08% of the variance in body mass (R-squared = 0.8708), with significant predictors including speciesGentoo, flipper_length_mm, and sexmale. The p-values for these predictors are very low, indicating they significantly affect body mass. On the other hand, predictors like island and islandTorgersen are not statistically significant, suggesting they can be removed to simplify the model. The overall model is highly significant, with a very low p-value for the F-statistic, confirming its strong predictive power.
 
-]
-
-# 4. Summary 
-
-
-
-These methods can be used together or separately depending on the stage of model selection:
-
-
-Stepwise selection might be used first to identify a good baseline model.
-Drop1 and 1-way ANOVA can then be applied to further refine the model.
-2-way ANOVA provides a final check on whether removing interaction terms leads to a significant loss in model fit.
+Both methods result in the same final model. We see that the $R^2$ and the RSE have *marginally improved*. This tells us that our model perfroms the same as our reserach partners model. However, we should probably narrow down our research questions and investigate if specfifc explanatory varaibles affect body mass. 
