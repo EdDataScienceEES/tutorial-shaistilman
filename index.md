@@ -115,14 +115,70 @@ The `drop1` function evaluates what happens to the AIC if each variable in the m
    - It provides a table showing the AIC for all possible one-variable-removal models.
 
 **The `drop1` Table**
-| **Column**                     | **What It Represents**                                                                                                                                                                      | **Why It's Important**                                                                                                                                                     | **How Each Column Helps Track Impact**                                                                                                                                   |
-|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Df (Degrees of Freedom)**    | The number of parameters associated with each explanatory variable (i.e., the number of levels the explanatory variable has). It is important to remember that when we have categorical variables, they include a baseline in the intercept. For example, if a categorical variable has 3 levels, the first level is part of the baseline, leaving 2 levels (and thus 2 degrees of freedom). | Indicates the complexity of the model. Predictors with higher Df contribute more parameters, increasing model complexity. Removing a predictor reduces the model's Df.     | Tracks how the model's complexity changes when a predictor is removed, helping assess if simplifying the model is justifiable.                                             |
-| **Sum of Squares (Sum of Sq)** | The variation in the response variable explained by each explanatory variable.                                                                                                              | Shows each explanatory variable’s contribution to explaining variance in the response. Larger values indicate stronger explanatory power.                                  | Highlights the explanatory variables with substantial impact, making them candidates for retention in the model (i.e., we don’t want to drop them!).                      |
-| **Residual Sum of Squares (RSS)** | The amount of unexplained variance (errors) after the model is fitted without the explanatory variable.                                                                                     | A lower RSS means the model fits the data better by explaining more variance. High RSS indicates a worse fit after removing an explanatory variable (i.e., we don’t drop it!). | Tracks how much variance is left unexplained if an explanatory variable is removed, revealing its importance in reducing errors in the model.                              |
-| **AIC**                        | The model's AIC after the explanatory variable has been removed.                                                                                                                             | A lower AIC indicates a model that better balances accuracy and simplicity.                                                                                               | Helps identify explanatory variables that improve the model’s AIC when removed, making them candidates for removal if the AIC improves.                                   |
 
-How to Interpret the Results**  
+<table border="1" style="background-color: #ffe6e6;">
+  <thead>
+    <tr>
+      <th><b>Column</b></th>
+      <th><b>What It Represents</b></th>
+      <th><b>Why It's Important</b></th>
+      <th><b>How Each Column Helps Track Impact</b></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Df (Degrees of Freedom)</b></td>
+      <td>
+        The number of parameters associated with each explanatory variable (i.e., the number of levels the explanatory variable has). It is important to remember that when we have categorical variables, they include a baseline in the intercept. For example, if a categorical variable has 3 levels, the first level is part of the baseline, leaving 2 levels (and thus 2 degrees of freedom).
+      </td>
+      <td>
+        Indicates the complexity of the model. Predictors with higher Df contribute more parameters, increasing model complexity. Removing a predictor reduces the model's Df.
+      </td>
+      <td>
+        Tracks how the model's complexity changes when a predictor is removed, helping assess if simplifying the model is justifiable.
+      </td>
+    </tr>
+    <tr>
+      <td><b>Sum of Squares (Sum of Sq)</b></td>
+      <td>
+        The variation in the response variable explained by each explanatory variable.
+      </td>
+      <td>
+        Shows each explanatory variable’s contribution to explaining variance in the response. Larger values indicate stronger explanatory power.
+      </td>
+      <td>
+        Highlights the explanatory variables with substantial impact, making them candidates for retention in the model (i.e., we don’t want to drop them!).
+      </td>
+    </tr>
+    <tr>
+      <td><b>Residual Sum of Squares (RSS)</b></td>
+      <td>
+        The amount of unexplained variance (errors) after the model is fitted without the explanatory variable.
+      </td>
+      <td>
+        A lower RSS means the model fits the data better by explaining more variance. High RSS indicates a worse fit after removing an explanatory variable (i.e., we don’t drop it!).
+      </td>
+      <td>
+        Tracks how much variance is left unexplained if an explanatory variable is removed, revealing its importance in reducing errors in the model.
+      </td>
+    </tr>
+    <tr>
+      <td><b>AIC</b></td>
+      <td>
+        The model's AIC after the explanatory variable has been removed.
+      </td>
+      <td>
+        A lower AIC indicates a model that better balances accuracy and simplicity.
+      </td>
+      <td>
+        Helps identify explanatory variables that improve the model’s AIC when removed, making them candidates for removal if the AIC improves.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+**How to Interpret the Results**  
    - If removing a variable reduces the AIC (i.e., leads to a lower AIC), it suggests that the model improves when that variable is dropped. This may happen if the variable does not contribute significantly to the model or introduces unnecessary complexity.
    - If removing a variable increases the AIC, it indicates that the variable is important for the model, and dropping it would harm the balance between fit and complexity.
 
@@ -278,12 +334,67 @@ The `step` function in R automates stepwise model selection by evaluating the AI
 For each iteration the `step` function creates a summary table which shows the details of each model, the models are listed from **lowest to highest** AIC. The **<none> Row** shows the current model’s performance (AIC, RSS, etc.) before any changes (i.e., before any predictor is removed), it serves as a reference point for comparing the impact of removing predictors and helps assess how each variable removal affects the model.       
 
 Each column tells us something different for the model we are looking at:
-| **Column**                     | **What It Represents**                                                                                                                                   | **Why It's Important**                                                                                                                                                           | **How Each Column Helps Track Impact**                                                                                                                                               |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Df (Degrees of Freedom)**     | The number of parameters (or pieces of information) associated with each predictor minus 1.                                                                    | Indicates the complexity of the model. A predictor with higher Df typically contributes more parameters to the model. The removal of a predictor reduces the model's Df.           | Shows how the number of parameters changes when a predictor is added or removed.                                                                                                       |
-| **Sum of Squares (Sum of Sq)**  | The amount of variation explained by each predictor in the model.                                                                                     | Shows the contribution of each predictor to explaining the variance in the dependent variable. Larger values indicate greater contribution.                                       | Indicates how much variation is explained by a predictor. A larger value means the predictor contributes more to explaining the response variable.                                  |
-| **Residual Sum of Squares (RSS)** | The amount of unexplained variance (errors) after fitting the model.                                                                                 | A lower RSS indicates a better-fitting model because the model explains more of the variance in the data. The goal is to minimize RSS.                                           | Reveals how much unexplained variance remains after fitting the model. A lower RSS suggests better model fit.                                                                         |
-| **Akaike Information Criterion (AIC)** | A measure used for model selection that balances model fit and complexity (number of parameters).                                                   | A lower AIC indicates a better model that balances fit and complexity. The `step()` function selects models based on the lowest AIC.                                             | The primary measure for model selection. The goal is to minimize AIC by selecting the model with the best balance between complexity and fit.                                        |
+
+<table border="1" style="background-color: #ffe6e6;">
+  <thead>
+    <tr>
+      <th><b>Column</b></th>
+      <th><b>What It Represents</b></th>
+      <th><b>Why It's Important</b></th>
+      <th><b>How Each Column Helps Track Impact</b></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Df (Degrees of Freedom)</b></td>
+      <td>
+        The number of parameters (or pieces of information) associated with each predictor minus 1.
+      </td>
+      <td>
+        Indicates the complexity of the model. A predictor with higher Df typically contributes more parameters to the model. The removal of a predictor reduces the model's Df.
+      </td>
+      <td>
+        Shows how the number of parameters changes when a predictor is added or removed.
+      </td>
+    </tr>
+    <tr>
+      <td><b>Sum of Squares (Sum of Sq)</b></td>
+      <td>
+        The amount of variation explained by each predictor in the model.
+      </td>
+      <td>
+        Shows the contribution of each predictor to explaining the variance in the dependent variable. Larger values indicate greater contribution.
+      </td>
+      <td>
+        Indicates how much variation is explained by a predictor. A larger value means the predictor contributes more to explaining the response variable.
+      </td>
+    </tr>
+    <tr>
+      <td><b>Residual Sum of Squares (RSS)</b></td>
+      <td>
+        The amount of unexplained variance (errors) after fitting the model.
+      </td>
+      <td>
+        A lower RSS indicates a better-fitting model because the model explains more of the variance in the data. The goal is to minimize RSS.
+      </td>
+      <td>
+        Reveals how much unexplained variance remains after fitting the model. A lower RSS suggests better model fit.
+      </td>
+    </tr>
+    <tr>
+      <td><b>Akaike Information Criterion (AIC)</b></td>
+      <td>
+        A measure used for model selection that balances model fit and complexity (number of parameters).
+      </td>
+      <td>
+        A lower AIC indicates a better model that balances fit and complexity. The `step()` function selects models based on the lowest AIC.
+      </td>
+      <td>
+        The primary measure for model selection. The goal is to minimize AIC by selecting the model with the best balance between complexity and fit.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
  **Final Model**:
