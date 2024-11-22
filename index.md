@@ -13,7 +13,7 @@
 1. [**Introduction**](#Intro)
   - [Prerequisites](#Prerequisites)
   - [Data and Materials](#DataMat)
-2. [**The AIC Value**](#eval)
+2. [**The AIC Value**](#aic)
 3. [**AIC Model Selection**](#selection)
   - [Drop1](#drop)
   - [Step](#step)
@@ -65,7 +65,7 @@ By using this dataset, you'll have the opportunity to apply AIC-based model sele
 ---
 
 # 2. Akaike Information Criterion (AIC)  
-{: #AIC}  
+{: #aic}  
 
 Up until now the main evaluation metric on how to make model-based descions has been the **p-value** and although this is a powerful metric in real-world scenarios it has limitations. In large datasets, p-values often identify statistically significant variables that have negligible practical relevance, leading to unnecessarily complex models. Additionally, p-values do not measure a variable’s importance or effect size and can become unreliable in the presence of multicollinearity, where overlapping effects between predictors obscure their individual contributions. Focusing solely on p-values risks overfitting, reducing a model's generalizability and predictive accuracy.  
 
@@ -618,7 +618,7 @@ That’s why we should always use AIC alongside other measures, like Residual St
 
 ---
 # 5. Summary
-
+{: #summary}  
 In this tutorial, we explored the AIC value and how it can be applied in model selection. It helps us find the right balance between model accuracy and simplicity, making it especially useful in fields like ecology and environmental sciences where datasets are often large and complex.
 
 #### Key Points:
@@ -642,7 +642,7 @@ AIC is a great tool for selecting models, but it’s not the whole picture. Usin
 
 ---
 # 6. Challenge 
-
+{: #challenge}  
 You have been asked to research what effects the body mass of penguins! Your research partner has extracted the `penguins` data from the palmerspenguin package and has cleaned it up. They then constructed the following model to answer the research question.
 
 ```r
