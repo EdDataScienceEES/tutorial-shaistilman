@@ -43,7 +43,7 @@ africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn
 step(africa_interact_lm)
 
 
-A#Challenge ----
+#Challenge ----
 # Load required packages
 library(palmerpenguins)
 library(dplyr)
@@ -56,28 +56,39 @@ penguins_clean <- penguins %>%
 # Save the cleaned data to a CSV file in the data folder
 write.csv(penguins_clean, "data/penguins_clean.csv", row.names = FALSE)
 
+colnames(penguins_clean)
+#research partner model
 
-full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex, data = penguins_clean)
+full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
 
+#start by looking at the summary
 summary(full_model)
+#R^2 = 0.8794, Adjusted R^2 = 0.8749, RSE = 284.8 
 
-# Method 1: Use drop1 to analyse the impact of removing each variable from the final model
-# Drop each term from the model and compare AIC
+#method 1
+
 drop1(full_model) 
-#because we have an interaction term, drop1 only looks at those terms and as such doesn't give us infromation on anything apart
-#from the interaction term
+#tell us that dropping  species:flipper_length_mm results in a slightly reduced AIC therfore we should drop it 
 
-# Method 2: We can use step to gain an understanding of which unnecessary variables should be dropped 
-#- not just looking at the interaction terms
-#step 1
+#define new model 
+new_model <- lm(body_mass_g ~ species + flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+
+drop1(new_model)
+
+#no terms should be dropped!
+summary(new_model)
+#R^2= 0.8792, Adh R^2 = 0.8755, RSE = 284.1
+
+
+
+#method 2
 step(full_model)
-step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island + 
-                   sex + island:sex, data = penguins_clean)
+#drops species:flipper_length_mm
+
+#new model:
+step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island* sex
+                 + bill_length_mm + bill_depth_mm, data = penguins_clean)
+
+#summary:
 summary(step_model)
-
-
-
-
-
-
-
+#R^2 =  0.8792, Adj R^2 = 0.8755, RSE = 284.1

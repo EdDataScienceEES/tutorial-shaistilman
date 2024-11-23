@@ -48,9 +48,14 @@ This tutorial builds on your foundational linear modeling skills and guides you 
 ## Data and Materials
 {: #DataMat}
 
-All the data you'll need for this tutorial can be found in the [GitHub repository](https://github.com/EdDataScienceEES/tutorial-shaistilman). We recommend downloading the data to your computer so you can follow along with the examples throughout the tutorial. This hands-on approach will help reinforce your understanding of the concepts covered.
+All the data you'll need for this tutorial can be found in `data` folder in [this GitHub repository](https://github.com/EdDataScienceEES/tutorial-shaistilman). We recommend downloading the data to your computer so you can follow along with the examples throughout the tutorial. This hands-on approach will help reinforce your understanding of the concepts covered.
 
-For this tutorial, we'll be working with datasets from two R packages: `faraway` and `palmerpenguins`. Both packages contain a variety of datasets for different applications. Our primary focus will be the `africa_data` dataset from the `faraway` package, which explores factors influencing military coups (denoted by `miltcoup`). The model will include several predictor variables such as:
+For this tutorial, we'll be working with datasets from two R packages: `faraway` and `palmerpenguins`.
+
+Source: [Faraway Package](https://cran.r-project.org/web/packages/faraway/index.html)
+Source: [PalmersPeguins Package](https://cran.r-project.org/web/packages/palmerpenguins/index.html)
+
+Both packages contain a variety of datasets for different applications. Our primary focus will be the `africa_data` dataset from the `faraway` package, which explores factors influencing military coups (denoted by `miltcoup`). The model will include several predictor variables such as:
 
 - **Oligarchy** (`oligarchy`)
 - **Political liberties** (`pollib`)
