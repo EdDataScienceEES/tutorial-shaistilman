@@ -646,7 +646,7 @@ AIC is a great tool for selecting models, but it’s not the whole picture. Usin
 You have been asked to research what effects the body mass of penguins! Your research partner has extracted the `penguins` data from the palmerspenguin package and has cleaned it up. They then constructed the following model to answer the research question.
 
 ```r
-full_mofull_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
+full_model <- lm(body_mass_g ~ species*flipper_length_mm + island*sex + bill_length_mm + bill_depth_mm, data = penguins_clean)
 ```
 
 This model looks complex and you believe it can be simplified. Using AIC model selection decide *based off the AIC value* which terms should be kept in the model. Compare the summaries of the ful model and the final model you've selected, has the $R^2$ and RSE value improved?
