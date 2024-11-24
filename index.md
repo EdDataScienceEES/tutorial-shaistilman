@@ -1,4 +1,16 @@
+#### title: "Creation of a new tutorial"
+output: html_document
+css: Misc/style.css
+---
 
+<div class="banner">
+  <h1>LINEAR MODELS:</h1>
+  <h2>AIC MODEL SELECTION</h2>
+</div>
+
+Created by Shai Stilman - November 2024
+
+--------
 
 # Tutorial aims:
 
