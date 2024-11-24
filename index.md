@@ -551,7 +551,7 @@ step(africa_interact_lm)
 ```
 This gives us the following output:
 
-<center><img src="{{ site.baseurl }}/figures/step(africa_interact_lm).png" alt="Img" style="width: 100%; height: auto;"></center>
+<center><img src="{{ site.baseurl }}/figures/step(africa_interact).png" alt="Img" style="width: 100%; height: auto;"></center>
 
 We we interpret as follows:
 #### Step 1: Initial Model

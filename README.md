@@ -1,41 +1,44 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/6eRt7-90)
-# tutorial-instructions
-## Instructions for Tutorial Assignment
+# README: AIC Model Selection in R
 
-The key final assignment for the Data Science course is to create your own tutorial. Your tutorial has to communicate a specific quantitative skill - you can choose the level at which you pitch your tutorial and how advanced or introductory it is. You can create "part 2" tutorials where "part 1" is an existing Coding Club tutorial.
+## Understand and Apply AIC Model Selection
 
-You are encouraged to add your peers to your tutorial development repositories so that you can exchange feedback - remember that the best way to check if your tutorial makes sense is to have someone that is not you go through it.
+Are you ready to deepen your skills in linear modeling and learn how to refine models with precision? This tutorial focuses on the **Akaike Information Criterion (AIC)** and its applications in model selection, specifically tailored for ecological and environmental datasets.
 
-__Note that the deadline for this challenge is 12pm on 28th November 2024. Submission is via GitHub like with previous challenges, but you have to also submit a pdf version of your tutorial via Turnitin before 12pm on 28th November 2024. Your submission on GitHub will represent a repository that is also a website (the tutorial on making tutorials below explains how to turn a GitHub repo into a website) and you can just save a pdf of your website using `File/Export as pdf` when you've opened your repository website, you don't need to be separately generating a pdf through code unless you want to.__
+Here's what you'll learn:
 
-__Marking criteria:__
+1. Why and when AIC model selection is important.
+2. How to evaluate models using stepwise selection metrics.
+3. Practical use of the `drop1()` function for assessing variable importance.
+4. Automation of model refinement with the `step()` function.
+5. Application of AIC concepts to real-world problems in ecology and environmental science.
 
-•	Topic – A relevant topic and content that is appropriate for a Coding Club tutorial and relevant to the field of data science, plus appropriate for learners at a particular skill level - at least 4th year Environmental / Ecological science student. - 25%
+We’ll work through worked examples using datasets typical in ecological research, equipping you with the tools to handle large, complex datasets confidently.
 
-•	Structure – Clear and logical structure to the tutorial that is easy to navigate with clear instructions. Clear, concrete and measurable learning objectives (i.e., people can tell exactly what they are learning and when they have achieved each learning objective). - 25%
+Visit [Coding Club](https://ourcodingclub.github.io/) for more tutorials and to learn how to get involved!
 
-•	Reproducibility – People can do the tutorial on their own, without assistance and without needing to pay for extra software, the code works and people can easily access any data needed to complete the tutorial. - 25%
+---
 
-•	Creativity – A well-illustrated, professionally designed tutorial with appropriate figures and diagrams. A creative and engaging approach to teaching the learning objectives. - 25%
+## Prerequisites
 
-__Useful links:__
-- https://ourcodingclub.github.io/tutorials/tutorials/ - Coding Club tutorial on how to make tutorials
-- https://ourcodingclub.github.io/tutorials/ - all the other Coding Club tutorials
-- https://github.com/ourcodingclub/ourcodingclub.github.io - the repository behind the Coding Club website - here you can see the Markdown code for how the tutorials were formatted
-- https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf - markdown cheatsheet
+This tutorial is ideal for those with basic to intermediate knowledge of statistical analysis, particularly linear modeling. To get the most out of this session, you should be familiar with:
 
-__Absolute top of the class examples of tutorials made by DS students:__
-- https://ourcodingclub.github.io/tutorials/data-manip-creative-dplyr/ - Advanced data manipulation: Creative use of diverse dplyr functions by Jakub Wieczorkowski
-- https://ourcodingclub.github.io/tutorials/data-scaling/ - Transforming and scaling data by Matus Seci
-- https://ourcodingclub.github.io/tutorials/anova/ - ANOVA from A to (XY)Z by Erica Zaja
-- https://ourcodingclub.github.io/tutorials/spatial-vector-sf/ - Geospatial vector data in R with sf by Boyan Karabaliev
-- https://eddatascienceees.github.io/tutorial-assignment-beverlytan/ - Creating a repository with a clear structure by Beverly Tan
-- https://ourcodingclub.github.io/tutorials/spatial/ - Intro to Spatial Analysis in R by Maude Grenier
+- The basics of **linear models** using the `lm()` function in R.
+- Understanding the **summary output** of models, including key metrics like \(R^2\) and Residual Standard Error (RSE).
 
-All the other useful links we have shared with previous challenges and from the course reading - think of the tutorials you have done in the past - what did you like about those tutorials, what didn't work so well and could be improved.
+If you’re new to linear models or need a refresher, we recommend the following tutorials on the Coding Club website:  
+- [From Distributions to Linear Models](https://ourcodingclub.github.io/tutorials/modelling/)  
+- [Introduction to Model Design](https://ourcodingclub.github.io/tutorials/model-design/)
+
+This tutorial builds on those foundational skills, guiding you through the use of AIC for selecting the best linear models.
+
+---
+
+## Acknowledgments
+
+The datasets used in this tutorial are publicly available under relevant licenses and are tailored for educational purposes and can be downloaded from their relevant packages. This tutorial is designed to empower you with practical tools to enhance your analytical capabilities in ecological and environmental research. 
+
+Source: [Faraway Package](https://cran.r-project.org/web/packages/faraway/index.html)
+Source: [PalmersPeguins Package](https://cran.r-project.org/web/packages/palmerpenguins/index.html)
 
 
-# maths mode
-<sup>
-  \gamma
-</sup>sup>
+For more about Coding Club and how you can get involved, visit [Coding Club](https://ourcodingclub.github.io/).
