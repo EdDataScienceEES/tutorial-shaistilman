@@ -7,11 +7,10 @@ library(tidyverse)  # contains ggplot2 (data visualization) and other useful pac
 #Drop1 ----
 # Import Data
 load("data/africa.rda")  # Load the data
-africa_data <- africa   #assign name
 #no interaction
 #define linear model
 africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size
-                + numelec + numregim, africa_data)
+                + numelec + numregim, africa)
 
 #apply drop1
 drop1(africa_lm)
@@ -19,7 +18,7 @@ drop1(africa_lm)
 #interaction 
 #define linear model
 africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
-                         + numelec + numregim, africa_data)
+                         + numelec + numregim, africa)
 
 #apply step()
 drop1(africa_interact_lm)
@@ -29,7 +28,7 @@ drop1(africa_interact_lm)
 #no interaction
 #define linear model
 africa_lm <- lm(miltcoup ~ oligarchy + as.factor(pollib) + parties + popn + size
-+ numelec + numregim, africa_data)
++ numelec + numregim, africa)
 
 #apply step()
 step(africa_lm)
@@ -37,7 +36,7 @@ step(africa_lm)
 #interaction 
 #define linear model
 africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
-                + numelec + numregim, africa_data)
+                + numelec + numregim, africa
 
 #apply step()
 step(africa_interact_lm)
