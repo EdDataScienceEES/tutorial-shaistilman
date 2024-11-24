@@ -12,6 +12,7 @@ Created by Shai Stilman - November 2024
 
 --------
 
+
 # Tutorial aims:
 
 1. Understand why and when we perfrom AIC model selection.
