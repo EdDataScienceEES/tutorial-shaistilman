@@ -1,6 +1,6 @@
 #### title: "Creation of a new tutorial"
 output: html_document
-css: Misc/style.css
+css: style.css
 ---
 
 <div class="banner">
