@@ -15,7 +15,7 @@ body {
 
 
 .banner {
-  background-image: url('figures/banner.jpg');
+  background-image: url('figures/banner.jpeg');
   background-size: cover;
   width: 100%; /* Stretches the banner across the full width */
   background-position: center;
