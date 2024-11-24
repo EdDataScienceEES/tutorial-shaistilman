@@ -36,7 +36,7 @@ step(africa_lm)
 #interaction 
 #define linear model
 africa_interact_lm <- lm(miltcoup ~ oligarchy*parties + as.factor(pollib) + popn + size
-                + numelec + numregim, africa
+                + numelec + numregim, africa)
 
 #apply step()
 step(africa_interact_lm)
@@ -91,3 +91,4 @@ step_model <- lm(formula = body_mass_g ~ species + flipper_length_mm + island* s
 #summary:
 summary(step_model)
 #R^2 =  0.8792, Adj R^2 = 0.8755, RSE = 284.1
+
