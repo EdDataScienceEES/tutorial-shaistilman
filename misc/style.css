@@ -40,3 +40,15 @@ body {
   font-size: 3em;
   font-weight: normal;
 }
+
+
+.lightpink-box {
+  background-color: #ffe6e6; /* Light pink background */
+  border: 1px solid #ffcccc; /* Slightly darker pink border */
+  padding: 15px; /* Add some padding inside the box */
+  border-radius: 8px; /* Rounded corners for a smoother look */
+  margin: 10px 0; /* Space above and below the box */
+  color: #333; /* Text color for readability */
+  font-size: 1rem; /* Adjust font size if needed */
+}
+
