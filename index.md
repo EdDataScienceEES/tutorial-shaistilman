@@ -134,12 +134,12 @@ To begin with lets have a look at how we can do AIC model selection using the `d
 
 The `drop1` function in R is used during model selection to evaluate the impact of removing individual variables from a model. It one of the most commonly used function in stepwise model selection and it works by comparing the AIC values of models with and without each variable. We remember from Section 2 a **lower AIC** indicates a better model, as it suggests a better balance between fit and complexity and a **high Sum of Sq** indicates the predictor we are looking at significantly helps explain the response variable.
 
-<div class="lightpink-box">
+
 ### What Does `drop1` Do?
   The `drop1` function evaluates what happens to the AIC if each variable in the model is removed one at a time. For each variable:
   - It calculates the AIC of the model without that variable.
   - It provides a table showing the AIC for all possible one-variable-removal models.
-</div>
+
 
 
 **The `drop1` Table**
@@ -385,7 +385,7 @@ Since we only remove one term at a time (focusing on the term whose removal lead
 
 The `step` function streamlines the process by automating the stepwise approach. It iteratively adds or removes variables to optimize the model based on AIC. Essentially, the `step` function handles the repeated application of `drop1` for us, outputting the final model where removing any explanatory variable would increase the AIC.
 
-<div class="lightpink-box">
+
 ### How Does The `step` Function Work?
 
 The `step` function in R automates stepwise model selection by evaluating the AIC for all deletions of predictors at each step. Here's how it works:
@@ -393,7 +393,7 @@ The `step` function in R automates stepwise model selection by evaluating the AI
 2. It iteratively evaluates potential models by removing each variable and calculating the AIC, selecting the model with the **lowest AIC** to carry forward.
 3. It repeats this process untill removing variables reduces the AIC, i.e we have the 'best' model accoridng to AIC.
    
-</div>
+
 ### How Do We Interpret The Results? 
 
 For each iteration the `step` function creates a summary table which shows the details of each model, the models are listed from **lowest to highest** AIC. The `<none>` row shows the current model’s performance (AIC, RSS, etc.) before any changes (i.e., before any predictor is removed), it serves as a reference point for comparing the impact of removing predictors and helps assess how each variable removal affects the model.       
