@@ -1,6 +1,7 @@
-#### title: "Creation of a new tutorial"
-output: html_document
-css: misc/style.css
+---
+title:"Creation of a New Tutorial"
+output:html_document
+css:misc/style.css
 ---
 
 <div class="banner">
@@ -9,8 +10,6 @@ css: misc/style.css
 </div>
 
 Created by Shai Stilman - November 2024
-
---------
 
 
 # Tutorial aims:
