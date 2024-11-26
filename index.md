@@ -1,6 +1,6 @@
 
-#LINEAR MODELS: AIC Model Selection
-##*Created by Shai Stilman - November 2024*
+# LINEAR MODELS: AIC Model Selection
+## *Created by Shai Stilman - November 2024*
 
 # Tutorial aims:
 
