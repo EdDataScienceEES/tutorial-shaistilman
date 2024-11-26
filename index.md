@@ -1,7 +1,10 @@
+
 ---
-title:"Creation of a New Tutorial"
-output:html_document
-css:misc/style.css
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+css: misc/style.css
 ---
 
 <div class="banner">
@@ -9,8 +12,9 @@ css:misc/style.css
   <h2>AIC MODEL SELECTION</h2>
 </div>
 
-Created by Shai Stilman - November 2024
+_Created by Shai Stilman - November 2024_
 
+--------
 
 # Tutorial aims:
 
